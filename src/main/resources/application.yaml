@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: georoute-api                                                                                                                                                      │
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/georoute-api
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
