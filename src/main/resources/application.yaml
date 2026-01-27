@@ -14,3 +14,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/georoute-api
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
