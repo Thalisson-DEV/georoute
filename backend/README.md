@@ -57,11 +57,21 @@ src/main/java/com/sipel/backend/
 
 ## 🛠️ Instalação e Configuração
 
-### Pré-requisitos
+### 🚀 Produção (Railway)
+
+Para o deploy no Railway:
+1. A aplicação utiliza o perfil `prod` via `Procfile`.
+2. Utilize os **Add-ons nativos** do Railway para PostgreSQL e Redis.
+3. A observabilidade é feita de forma nativa pelo painel do Railway (Metrics/Logs).
+4. O `docker-compose.yaml` é ignorado no deploy da API.
+
+### 💻 Desenvolvimento Local
+
+#### Pré-requisitos
 - **Java 21** instalado.
 - **Docker** e **Docker Compose** instalados.
 
-### Passo a Passo
+#### Passo a Passo
 
 1. **Clone o repositório**
    ```bash
@@ -69,8 +79,8 @@ src/main/java/com/sipel/backend/
    cd backend
    ```
 
-2. **Suba a Infraestrutura (Banco de Dados e Monitoramento)**
-   O projeto utiliza Docker para gerenciar dependências externas como Redis, Prometheus e Grafana.
+2. **Suba a Infraestrutura Local**
+   O projeto utiliza Docker para gerenciar dependências externas em ambiente de desenvolvimento.
    ```bash
    docker-compose up -d
    ```

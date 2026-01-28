@@ -1,3 +1,7 @@
+# LOCAL DEVELOPMENT STACK
+# Estes serviços são destinados apenas para uso local.
+# No Railway, utilize os Add-ons nativos para Redis/Postgres e a observabilidade nativa.
+
 services:
   redis:
     image: redis:alpine
@@ -13,7 +17,7 @@ services:
     ports:
       - "9090:9090"
     extra_hosts:
-      - "host.docker.internal:host-gateway" # Necessário para Linux/Docker em alguns ambientes, boa prática
+      - "host.docker.internal:host-gateway"
 
   grafana:
     image: grafana/grafana:latest
@@ -21,6 +25,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin # Senha inicial
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
