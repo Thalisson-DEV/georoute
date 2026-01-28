@@ -25,6 +25,14 @@ logging:
     root: INFO
     com.sipel.backend: INFO
 
+spring:
+  cache:
+    type: none
+  data:
+    redis:
+      repositories:
+        enabled: false
+
 # Variáveis que serão configuradas no painel do Railway
 api:
   security:
