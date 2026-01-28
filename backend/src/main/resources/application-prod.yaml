@@ -1,4 +1,12 @@
 spring:
+  cache:
+    type: ${SPRING_CACHE_TYPE:redis}
+  data:
+    redis:
+      host: ${REDISHOST:localhost}
+      port: ${REDISPORT:6379}
+      username: ${REDISUSER}
+      password: ${REDISPASSWORD}
   datasource:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
     username: ${PGUSER}
@@ -24,16 +32,6 @@ logging:
   level:
     root: INFO
     com.sipel.backend: INFO
-
-spring:
-  cache:
-    type: ${SPRING_CACHE_TYPE:redis}
-  data:
-    redis:
-      host: ${REDISHOST:localhost}
-      port: ${REDISPORT:6379}
-      username: ${REDISUSER}
-      password: ${REDISPASSWORD}
 
 # Variáveis que serão configuradas no painel do Railway
 api:
