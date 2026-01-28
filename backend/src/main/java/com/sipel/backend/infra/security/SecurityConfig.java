@@ -28,14 +28,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors -> cors.configure(httpSecurity))
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/clientes/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/maps/redirect").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/clientes/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/maps/redirect").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
