@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-geoblue: rgba(9, 33, 98, 1);
+  --color-geoblue-50: #eef2ff;
+  --color-geoblue-100: #e0e7ff;
+  --color-geoblue-200: #c7d2fe;
+  --color-geoblue-300: #a5b4fc;
+  --color-geoblue-400: #818cf8;
+  --color-geoblue-500: rgba(9, 33, 98, 1);
+  --color-geoblue-600: #061c55;
+  --color-geoblue-700: #04143d;
+  --color-geoblue-800: #030e2b;
+  --color-geoblue-900: #02081a;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    @apply bg-gray-50 text-gray-900 transition-colors duration-300;
+}
+
+html.dark body {
+    @apply bg-gray-950 text-gray-100;
+}
+
+/* Custom Scrollbar for dark mode if needed */
+html.dark ::-webkit-scrollbar {
+    width: 8px;
+}
+html.dark ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+}
+html.dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.3s ease-out;
+}

@@ -5,7 +5,7 @@ spring:
   application:
     name: georoute-api                                                                                                                                                      │
   profiles:
-    active: dev
+    active: test
   servlet:
     multipart:
       max-file-size: 100MB
@@ -15,6 +15,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+
 management:
   endpoints:
     web:
@@ -23,3 +24,9 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+api:
+  security:
+    token:
+      secret:
+        ${JWT_SECRET}

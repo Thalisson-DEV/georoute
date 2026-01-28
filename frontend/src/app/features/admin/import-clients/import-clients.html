@@ -1,0 +1,73 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-geoblue-900 dark:text-geoblue-100">Importação em Massa</h1>
+    <p class="text-gray-600 dark:text-gray-400">Carregue um arquivo CSV para cadastrar ou atualizar clientes em lote.</p>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+
+    <!-- Instructions -->
+    <div class="mb-8 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md border border-blue-100 dark:border-blue-800">
+      <h3 class="font-semibold text-geoblue-800 dark:text-geoblue-200 mb-2">Instruções</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm text-gray-700 dark:text-gray-300">
+        <li>O arquivo deve estar no formato <strong>.CSV</strong></li>
+        <li>Utilize codificação UTF-8</li>
+        <li>A primeira linha deve conter o cabeçalho exato</li>
+        <li>Processamento ocorre em segundo plano</li>
+      </ul>
+      <div class="mt-4">
+        <a href="assets/modelo_importacao.csv" download="modelo_importacao.csv"
+           class="inline-flex items-center text-sm font-medium text-geoblue-600 hover:text-geoblue-500 dark:text-geoblue-400 dark:hover:text-geoblue-300">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Baixar modelo de exemplo
+        </a>
+      </div>
+    </div>
+
+    <!-- Upload Area -->
+    <div class="flex items-center justify-center w-full">
+      <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 transition-colors"
+             [class.border-gray-300]="!isLoading()" [class.border-geoblue-400]="isLoading()">
+
+        <div class="flex flex-col items-center justify-center pt-5 pb-6" *ngIf="!isLoading()">
+          <svg class="w-10 h-10 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+          </svg>
+          <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Clique para enviar</span> ou arraste o arquivo</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">CSV (MAX. 100MB)</p>
+        </div>
+
+        <div class="flex flex-col items-center justify-center pt-5 pb-6" *ngIf="isLoading()">
+          <svg class="animate-spin w-10 h-10 mb-4 text-geoblue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="text-sm text-geoblue-600 dark:text-geoblue-400 font-medium">Processando arquivo...</p>
+        </div>
+
+        <input id="dropzone-file" type="file" class="hidden" accept=".csv" (change)="onFileSelected($event)" [disabled]="isLoading()" />
+      </label>
+    </div>
+
+    <!-- Status Messages -->
+    <div *ngIf="message()" class="mt-6 p-4 rounded-md flex items-start"
+         [class.bg-green-100]="!isError()" [class.text-green-700]="!isError()" [class.border-green-400]="!isError()"
+         [class.bg-red-100]="isError()" [class.text-red-700]="isError()" [class.border-red-400]="isError()"
+         class="border">
+      <div class="flex-shrink-0 mr-3">
+        <svg *ngIf="!isError()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <svg *ngIf="isError()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-sm font-medium">{{ message() }}</p>
+      </div>
+    </div>
+
+  </div>
+</div>

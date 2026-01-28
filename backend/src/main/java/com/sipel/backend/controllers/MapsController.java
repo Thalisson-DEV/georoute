@@ -1,17 +1,17 @@
 package com.sipel.backend.controllers;
 
-import com.sipel.backend.dtos.MapsRequestDTO;
 import com.sipel.backend.services.MapsService;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,9 +33,13 @@ public class MapsController {
             @ApiResponse(responseCode = "400", description = "Coordenadas inválidas")
     })
     @GetMapping("/redirect")
-    public ResponseEntity<Void> redirectUrl(@RequestBody MapsRequestDTO mapsRequest) {
+    public ResponseEntity<Void> redirectUrl(
+            @Parameter(description = "Latitude do destino")
+            @RequestParam Double latitude,
+            @Parameter(description = "Longitude do destino")
+            @RequestParam Double longitude) {
         meterRegistry.counter("business.maps.redirects").increment();
-        HttpHeaders headers = mapsService.createMapsUrl(mapsRequest);
+        HttpHeaders headers = mapsService.createMapsUrl(latitude, longitude);
         return ResponseEntity.status(302).headers(headers).build();
     }
 }

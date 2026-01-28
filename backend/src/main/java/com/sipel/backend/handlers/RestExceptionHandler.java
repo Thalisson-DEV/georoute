@@ -3,6 +3,7 @@ package com.sipel.backend.handlers;
 import com.sipel.backend.dtos.RestExceptionResponseDTO;
 import com.sipel.backend.exceptions.CsvImportException;
 import com.sipel.backend.exceptions.EntityAlreadyExistsException;
+import com.sipel.backend.exceptions.UserAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,19 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MultipartException.class)
     public ResponseEntity<RestExceptionResponseDTO> handleMultipartException(MultipartException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(
+                LocalDateTime.now(),
+                e.getMessage(),
+                status.value()
+        );
+
+        return ResponseEntity.badRequest().body(exceptionResponse);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<RestExceptionResponseDTO> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(

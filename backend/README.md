@@ -122,6 +122,20 @@ Gerenciamento de dados dos clientes e instalações.
 | `GET` | `/api/v1/clientes/numero-serie/{id}` | Busca por Número de Série |
 | `GET` | `/api/v1/clientes/numero-poste/{id}` | Busca por Identificador do Poste |
 
+### 🔐 Autenticação
+Gerenciamento de acesso e tokens.
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/v1/auth/login` | Autentica um usuário e retorna um token JWT |
+
+### 👥 Usuários
+Gerenciamento de usuários do sistema.
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/v1/user/register` | Cadastra um novo usuário |
+
 ### 🗺️ Mapas
 Integração com serviços de geolocalização.
 
