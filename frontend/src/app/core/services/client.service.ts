@@ -46,11 +46,9 @@ export class ClientService {
     return this.http.post(`${this.apiUrl}/import`, formData, { responseType: 'text' });
   }
 
-  /**
-   * Abre o redirecionador do backend que encaminha para o Google Maps.
-   */
+  // Abre o redirecionador do backend que encaminha para o Google Maps
   openInMaps(latitude: number, longitude: number): void {
-    const mapsUrl = `${environment.apiUrl}/maps/redirect`;
+    const mapsUrl = `${this.apiUrl}/maps/redirect`;
     const url = `${mapsUrl}?latitude=${latitude}&longitude=${longitude}`;
     window.open(url, '_blank');
   }
