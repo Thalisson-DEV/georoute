@@ -44,7 +44,6 @@ for ($i = 1; $i -le $Iterations; $i++) {
             }
         }
     } catch {
-        # Ignoramos erros 404/500 pois o objetivo é incrementar o contador de tentativas
         Write-Host "[$i] Request feita (Retorno esperado de erro se DB vazio)" -ForegroundColor Gray
     }
 
@@ -58,7 +57,6 @@ for ($i = 1; $i -le $Iterations; $i++) {
             longitude = $Lng
         } | ConvertTo-Json
 
-        # Nota: GET com Body é atípico, mas suportado pelo seu Controller atual
         Invoke-RestMethod -Method Get -Uri "$BaseUrl/maps/redirect" -Body $Body -ContentType "application/json" -ErrorAction SilentlyContinue
         Write-Host "[$i] GET /maps/redirect (Lat: $Lat, Lng: $Lng)" -ForegroundColor Yellow
     } catch {
