@@ -5,12 +5,14 @@
   <a href="#-tecnologias-utilizadas">Tecnologias</a> •
   <a href="#-arquitetura-e-estrutura">Arquitetura</a> •
   <a href="#-instalação-e-configuração">Instalação</a> •
+  <a href="#-documentação-interativa-swagger">Documentação</a> •
   <a href="#-endpoints-da-api">Endpoints</a> •
   <a href="#-observabilidade">Observabilidade</a>
 </p>
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-green?style=for-the-badge&logo=spring&logoColor=white)
+![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
@@ -32,6 +34,7 @@ O projeto utiliza uma stack moderna baseada no ecossistema Spring:
 - **Spring Data JPA**: Abstração de persistência de dados.
 - **Flyway**: Versionamento e migração de banco de dados.
 - **MapStruct**: Mapeamento performático entre Entidades e DTOs.
+- **SpringDoc OpenAPI (Swagger)**: Documentação interativa e padronizada da API.
 - **Redis**: Caching distribuído para alta performance.
 - **OpenCSV**: Processamento assíncrono de grandes volumes de dados (Importação).
 - **Micrometer/Prometheus**: Coleta de métricas de aplicação e negócios.
@@ -96,6 +99,15 @@ src/main/java/com/sipel/backend/
 
    A API iniciará em `http://localhost:8080`.
 
+## 📚 Documentação Interativa (Swagger)
+
+A API possui documentação completa via **Swagger UI**, permitindo testar requisições diretamente pelo navegador e visualizar os schemas de dados.
+
+- **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **JSON Docs**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+Utilize essa interface para entender os parâmetros necessários, formatos de resposta e códigos de erro de cada endpoint.
+
 ## 🔌 Endpoints da API
 
 ### 👤 Clientes
@@ -129,7 +141,7 @@ O projeto já nasce instrumentado para monitoramento.
 
 O projeto está em evolução. As seguintes melhorias estão planejadas:
 
-- [ ] **Documentação:** Implementar Swagger UI / OpenAPI para documentação interativa das rotas e schemas.
+- [x] **Documentação:** Implementar Swagger UI / OpenAPI para documentação interativa das rotas e schemas.
 - [ ] **Segurança:** Adicionar camada de segurança (Spring Security) para proteger as rotas de escrita (`POST /clientes` e `importação`), exigindo autenticação.
 
 ## 🤝 Contribuição
