@@ -34,23 +34,28 @@
               "entry": "src/server.ts"
             }
           },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
+                      "configurations": {
+                      "production": {
+                        "budgets": [
+                          {
+                            "type": "initial",
+                            "maximumWarning": "500kB",
+                            "maximumError": "1MB"
+                          },
+                          {
+                            "type": "anyComponentStyle",
+                            "maximumWarning": "4kB",
+                            "maximumError": "8kB"
+                          }
+                        ],
+                        "fileReplacements": [
+                          {
+                            "replace": "src/environments/environment.development.ts",
+                            "with": "src/environments/environment.ts"
+                          }
+                        ],
+                        "outputHashing": "all"
+                      },            "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
