@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+
+server:
+  port: ${PORT:8080}
+  tomcat:
+    threads:
+      max: 20
+      min-spare: 5
+
+logging:
+  level:
+    root: INFO
+    com.sipel.backend: INFO
+
+# Variáveis que serão configuradas no painel do Railway
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET}
+
+app:
+  frontend:
+    url: ${FRONTEND_URL}

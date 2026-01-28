@@ -28,5 +28,8 @@ management:
 api:
   security:
     token:
-      secret:
-        ${JWT_SECRET}
+      secret: ${JWT_SECRET}
+
+app:
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:4200}

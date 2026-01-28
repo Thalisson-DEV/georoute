@@ -50,7 +50,8 @@ export class ClientService {
    * Abre o redirecionador do backend que encaminha para o Google Maps.
    */
   openInMaps(latitude: number, longitude: number): void {
-    const url = `${this.apiUrl}/maps/redirect?latitude=${latitude}&longitude=${longitude}`;
+    const mapsUrl = `${environment.apiUrl}/maps/redirect`;
+    const url = `${mapsUrl}?latitude=${latitude}&longitude=${longitude}`;
     window.open(url, '_blank');
   }
 }
