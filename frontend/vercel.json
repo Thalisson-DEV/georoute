@@ -1,10 +1,6 @@
 {
   "version": 2,
-  "public": true,
-  "cleanUrls": true,
-  "framework": "angular",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
