@@ -27,11 +27,13 @@ logging:
 
 spring:
   cache:
-    type: none
+    type: ${SPRING_CACHE_TYPE:redis}
   data:
     redis:
-      repositories:
-        enabled: false
+      host: ${REDISHOST:localhost}
+      port: ${REDISPORT:6379}
+      username: ${REDISUSER}
+      password: ${REDISPASSWORD}
 
 # Variáveis que serão configuradas no painel do Railway
 api:
