@@ -78,26 +78,26 @@ class ClientesControllerTest {
     @DisplayName("Should return cliente by instalacao")
     void shouldReturnClienteByInstalacao() throws Exception {
         Long id = 123L;
-        ClientesResponseDTO response = new ClientesResponseDTO(id, 456L, 789L, "P123", "Nome Teste", -23.1, -46.1);
+        ClientesResponseDTO response = new ClientesResponseDTO(id, "Nome Teste", -23.1, -46.1);
 
         when(clientesService.findClienteByInstalacao(id)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/clientes/instalacao/{instalacao}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.instalacao").value(id))
-                .andExpect(jsonPath("$.nome").value("Nome Teste"));
+                .andExpect(jsonPath("$.nomeCliente").value("Nome Teste"));
     }
 
     @Test
     @DisplayName("Should return cliente by conta contrato")
     void shouldReturnClienteByContaContrato() throws Exception {
         Long cc = 456L;
-        ClientesResponseDTO response = new ClientesResponseDTO(123L, cc, 789L, "P123", "Nome Teste", -23.1, -46.1);
+        ClientesResponseDTO response = new ClientesResponseDTO(123L, "Nome Teste", -23.1, -46.1);
 
         when(clientesService.findClienteByContaContrato(cc)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/clientes/conta-contrato/{contaContrato}", cc))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.contaContrato").value(cc));
+                .andExpect(jsonPath("$.instalacao").value(123L));
     }
 }

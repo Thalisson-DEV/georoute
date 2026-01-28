@@ -40,7 +40,7 @@ class ClientesRepositoryTest {
         Optional<Clientes> found = clientesRepository.findByNumeroSerie(789L);
 
         assertTrue(found.isPresent());
-        assertEquals("Teste", found.get().getNome());
+        assertEquals("Teste", found.get().getNomeCliente());
     }
 
     @Test

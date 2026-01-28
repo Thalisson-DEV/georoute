@@ -71,7 +71,7 @@ class ClientesServiceTest {
         void shouldReturnResponseWhenExists() {
             Long id = 123L;
             Clientes entity = new Clientes();
-            ClientesResponseDTO response = new ClientesResponseDTO(id, 456L, 789L, "P123", "Nome Teste", -23.123, -46.123);
+            ClientesResponseDTO response = new ClientesResponseDTO(id, "Nome Teste", -23.123, -46.123);
 
             when(clientesRepository.findById(id)).thenReturn(Optional.of(entity));
             when(clientesMapper.entityToDtoResponse(entity)).thenReturn(response);
@@ -79,7 +79,7 @@ class ClientesServiceTest {
             ClientesResponseDTO result = clientesService.findClienteByInstalacao(id);
 
             assertNotNull(result);
-            assertEquals(id, result.getInstalacao());
+            assertEquals(id, result.instalacao());
         }
 
         @Test
@@ -101,7 +101,7 @@ class ClientesServiceTest {
             Long cc = 456L;
             Clientes entity = new Clientes();
             when(clientesRepository.findByContaContrato(cc)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO());
+            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
 
             assertNotNull(clientesService.findClienteByContaContrato(cc));
         }
@@ -112,7 +112,7 @@ class ClientesServiceTest {
             Long ns = 789L;
             Clientes entity = new Clientes();
             when(clientesRepository.findByNumeroSerie(ns)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO());
+            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
 
             assertNotNull(clientesService.findClienteByNumeroSerie(ns));
         }
@@ -123,7 +123,7 @@ class ClientesServiceTest {
             String np = "P123";
             Clientes entity = new Clientes();
             when(clientesRepository.findByNumeroPoste(np)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO());
+            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
 
             assertNotNull(clientesService.findClienteByNumeroPoste(np));
         }

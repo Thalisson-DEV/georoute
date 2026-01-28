@@ -24,7 +24,7 @@ class ClientesMapperTest {
         assertNotNull(entity);
         assertEquals(dto.getInstalacao(), entity.getInstalacao());
         assertEquals(dto.getContaContrato(), entity.getContaContrato());
-        assertEquals(dto.getNome(), entity.getNome());
+        assertEquals(dto.getNomeCliente(), entity.getNomeCliente());
     }
 
     @Test
@@ -35,8 +35,7 @@ class ClientesMapperTest {
         ClientesResponseDTO dto = mapper.entityToDtoResponse(entity);
 
         assertNotNull(dto);
-        assertEquals(entity.getInstalacao(), dto.getInstalacao());
-        assertEquals(entity.getContaContrato(), dto.getContaContrato());
-        assertEquals(entity.getNome(), dto.getNome());
+        assertEquals(entity.getInstalacao(), dto.instalacao());
+        assertEquals(entity.getNomeCliente(), dto.nomeCliente());
     }
 }
