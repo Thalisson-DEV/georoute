@@ -38,7 +38,7 @@ public class ClientesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "clientes_v2", key = "#instalacao")
+    @Cacheable(value = "clientes_instalacao", key = "#instalacao")
     public ClienteResponseDTO findClienteByInstalacao(@Valid Long instalacao) {
         Clientes clientes = clientesRepository.findById(instalacao)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente inexistente com o id: " + instalacao));
@@ -47,7 +47,7 @@ public class ClientesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "clientes_v2", key = "#contaContrato")
+    @Cacheable(value = "clientes_conta_contrato", key = "{#contaContrato, #pageable.pageNumber, #pageable.pageSize, #pageable.sort}")
     public PaginatedClientesResponseDTO findClienteByContaContrato(Pageable pageable, Long contaContrato) {
         Page<Clientes> clientes = this.clientesRepository.findAllByContaContrato(contaContrato, pageable);
 
@@ -59,7 +59,7 @@ public class ClientesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "clientes_v2", key = "#numeroSerie")
+    @Cacheable(value = "clientes_numero_serie", key = "{#numeroSerie, #pageable.pageNumber, #pageable.pageSize, #pageable.sort}")
     public PaginatedClientesResponseDTO findClienteByNumeroSerie(Pageable pageable, Long numeroSerie) {
         Page<Clientes> clientes = this.clientesRepository.findAllByNumeroSerie(numeroSerie, pageable);
 
@@ -71,7 +71,7 @@ public class ClientesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "clientes_v2", key = "#numeroPoste")
+    @Cacheable(value = "clientes_numero_poste", key = "{#numeroPoste, #pageable.pageNumber, #pageable.pageSize, #pageable.sort}")
     public PaginatedClientesResponseDTO findClienteByNumeroPoste(Pageable pageable, String numeroPoste) {
         Page<Clientes> clientes = this.clientesRepository.findAllByNumeroPoste(numeroPoste, pageable);
 
