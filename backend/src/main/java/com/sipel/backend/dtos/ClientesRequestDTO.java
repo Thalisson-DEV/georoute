@@ -14,17 +14,15 @@ import lombok.NoArgsConstructor;
 public class ClientesRequestDTO {
 
     @CsvBindByName(column = "instalacao")
-    @NotNull(message = "O numero da instalação não deve estar em branco.")
+    @NotNull(message = "O numero da instalação não pode estar vazio.")
     @Schema(description = "Número da instalação do cliente", example = "12345678")
     private Long instalacao;
 
     @CsvBindByName(column = "conta_contrato")
-    @NotNull(message = "A conta contrato não deve estar em branco.")
     @Schema(description = "Número da conta contrato", example = "7000123456")
     private Long contaContrato;
 
     @CsvBindByName(column = "numero_serie")
-    @NotNull(message = "O numero de serie não deve estar em branco.")
     @Schema(description = "Número de série do medidor", example = "987654321")
     private Long numeroSerie;
 
