@@ -127,23 +127,17 @@ Gerenciamento de dados dos clientes e instalações.
 |---|---|---|
 | `POST` | `/api/v1/clientes` | Cadastra um novo cliente |
 | `POST` | `/api/v1/clientes/import` | Importação em massa via arquivo CSV (Async) |
-| `GET` | `/api/v1/clientes/instalacao/{id}` | Busca por Número de Instalação |
-| `GET` | `/api/v1/clientes/conta-contrato/{id}` | Busca por Conta Contrato |
-| `GET` | `/api/v1/clientes/numero-serie/{id}` | Busca por Número de Série |
-| `GET` | `/api/v1/clientes/numero-poste/{id}` | Busca por Identificador do Poste |
+| `GET` | `/api/v1/clientes/instalacao/{id}` | Busca por Número de Instalação (Cache Individual) |
+| `GET` | `/api/v1/clientes/conta-contrato/{id}` | Busca por Conta Contrato (Paginado & Cacheado) |
+| `GET` | `/api/v1/clientes/numero-serie/{id}` | Busca por Número de Série (Paginado & Cacheado) |
+| `GET` | `/api/v1/clientes/numero-poste/{id}` | Busca por Identificador do Poste (Paginado & Cacheado) |
 
-### 🔐 Autenticação
+### 🔐 Autenticação & Usuários
 Gerenciamento de acesso e tokens.
 
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/v1/auth/login` | Autentica um usuário e retorna um token JWT |
-
-### 👥 Usuários
-Gerenciamento de usuários do sistema.
-
-| Método | Rota | Descrição |
-|---|---|---|
 | `POST` | `/api/v1/user/register` | Cadastra um novo usuário |
 
 ### 🗺️ Mapas
