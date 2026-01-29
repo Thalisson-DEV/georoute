@@ -2,6 +2,7 @@ package com.sipel.backend.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sipel.backend.domain.Users;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,17 @@ public class TokenService {
     }
 
     public String validateToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
 
-        return JWT.require(algorithm)
-                .withIssuer("Spring Security")
-                .build()
-                .verify(token)
-                .getSubject();
+            return JWT.require(algorithm)
+                    .withIssuer("Spring Security")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException exception) {
+            return null;
+        }
     }
 
     private Instant generateExpirationDate() {

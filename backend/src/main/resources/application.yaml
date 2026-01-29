@@ -7,7 +7,7 @@ spring:
   application:
     name: georoute-api                                                                                                                                                      │
   profiles:
-    active: test
+    active: dev
   servlet:
     multipart:
       max-file-size: 100MB
