@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("api/v1/clientes")
+@RequestMapping("/api/v1/clientes")
 @Tag(name = "Clientes", description = "Endpoints para gerenciamento de clientes e importação de dados")
 @Validated
 public class ClientesController {
