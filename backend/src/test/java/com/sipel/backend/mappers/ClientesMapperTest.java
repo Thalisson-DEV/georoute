@@ -1,8 +1,8 @@
 package com.sipel.backend.mappers;
 
 import com.sipel.backend.domain.Clientes;
+import com.sipel.backend.dtos.ClienteResponseDTO;
 import com.sipel.backend.dtos.ClientesRequestDTO;
-import com.sipel.backend.dtos.ClientesResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -32,7 +32,7 @@ class ClientesMapperTest {
     void shouldMapEntityToDtoResponse() {
         Clientes entity = new Clientes(123L, 456L, 789L, "P123", "Teste", -23.0, -46.0);
 
-        ClientesResponseDTO dto = mapper.entityToDtoResponse(entity);
+        ClienteResponseDTO dto = mapper.entityToDtoResponse(entity);
 
         assertNotNull(dto);
         assertEquals(entity.getInstalacao(), dto.instalacao());

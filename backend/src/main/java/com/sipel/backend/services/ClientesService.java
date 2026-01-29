@@ -1,14 +1,17 @@
 package com.sipel.backend.services;
 
 import com.sipel.backend.domain.Clientes;
+import com.sipel.backend.dtos.ClienteResponseDTO;
 import com.sipel.backend.dtos.ClientesRequestDTO;
-import com.sipel.backend.dtos.ClientesResponseDTO;
+import com.sipel.backend.dtos.PaginatedClientesResponseDTO;
 import com.sipel.backend.exceptions.EntityAlreadyExistsException;
 import com.sipel.backend.mappers.ClientesMapper;
 import com.sipel.backend.repositories.ClientesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +39,7 @@ public class ClientesService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "cliente", key = "#instalacao")
-    public ClientesResponseDTO findClienteByInstalacao(@Valid Long instalacao) {
+    public ClienteResponseDTO findClienteByInstalacao(@Valid Long instalacao) {
         Clientes clientes = clientesRepository.findById(instalacao)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente inexistente com o id: " + instalacao));
 
@@ -45,28 +48,37 @@ public class ClientesService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "cliente", key = "#contaContrato")
-    public ClientesResponseDTO findClienteByContaContrato(@Valid Long contaContrato) {
-        Clientes clientes = clientesRepository.findByContaContrato(contaContrato)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente inexistente com o id: " + contaContrato));
+    public PaginatedClientesResponseDTO findClienteByContaContrato(Pageable pageable, Long contaContrato) {
+        Page<Clientes> clientes = this.clientesRepository.findAllByContaContrato(contaContrato, pageable);
 
-        return clientesMapper.entityToDtoResponse(clientes);
+        if (clientes.isEmpty()) {
+            throw new EntityNotFoundException("Cliente inexistente com o id: " + contaContrato);
+        }
+
+        return clientesMapper.entityToDtoPaginatedResponse(clientes);
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "cliente", key = "#numeroSerie")
-    public ClientesResponseDTO findClienteByNumeroSerie(@Valid Long numeroSerie) {
-        Clientes clientes = clientesRepository.findByNumeroSerie(numeroSerie)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente inexistente com o id: " + numeroSerie));
+    public PaginatedClientesResponseDTO findClienteByNumeroSerie(Pageable pageable, Long numeroSerie) {
+        Page<Clientes> clientes = this.clientesRepository.findAllByNumeroSerie(numeroSerie, pageable);
 
-        return clientesMapper.entityToDtoResponse(clientes);
+        if (clientes.isEmpty()) {
+            throw new EntityNotFoundException("Cliente inexistente com o id: " + numeroSerie);
+        }
+
+        return clientesMapper.entityToDtoPaginatedResponse(clientes);
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "cliente", key = "#numeroPoste")
-    public ClientesResponseDTO findClienteByNumeroPoste(@Valid String numeroPoste) {
-        Clientes clientes = clientesRepository.findByNumeroPoste(numeroPoste)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente inexistente com o id: " + numeroPoste));
+    public PaginatedClientesResponseDTO findClienteByNumeroPoste(Pageable pageable, String numeroPoste) {
+        Page<Clientes> clientes = this.clientesRepository.findAllByNumeroPoste(numeroPoste, pageable);
 
-        return clientesMapper.entityToDtoResponse(clientes);
+        if (clientes.isEmpty()) {
+            throw new EntityNotFoundException("Cliente inexistente com o id: " + numeroPoste);
+        }
+
+        return clientesMapper.entityToDtoPaginatedResponse(clientes);
     }
 }

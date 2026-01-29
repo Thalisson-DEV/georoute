@@ -3,7 +3,7 @@ package com.sipel.backend.dtos;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Dados de resposta do cliente")
-public record ClientesResponseDTO(
+public record ClienteResponseDTO(
         @Schema(description = "Número da instalação", example = "12345678")
         Long instalacao,
         @Schema(description = "Nome do cliente", example = "João da Silva")

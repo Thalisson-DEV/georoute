@@ -1,7 +1,8 @@
 package com.sipel.backend.controllers;
 
+import com.sipel.backend.dtos.ClienteResponseDTO;
 import com.sipel.backend.dtos.ClientesRequestDTO;
-import com.sipel.backend.dtos.ClientesResponseDTO;
+import com.sipel.backend.dtos.PaginatedClientesResponseDTO;
 import com.sipel.backend.infra.csv.CsvImportService;
 import com.sipel.backend.services.ClientesService;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -10,8 +11,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +25,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("api/v1/clientes")
 @Tag(name = "Clientes", description = "Endpoints para gerenciamento de clientes e importação de dados")
+@Validated
 public class ClientesController {
 
     private final ClientesService clientesService;
@@ -62,50 +68,65 @@ public class ClientesController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @GetMapping("instalacao/{instalacao}")
-    public ResponseEntity<ClientesResponseDTO> findClienteByInstalacao(
+    public ResponseEntity<ClienteResponseDTO> findClienteByInstalacao(
             @Parameter(description = "Número da instalação", example = "12345678")
             @PathVariable Long instalacao) {
         meterRegistry.counter("business.clientes.consultas", "tipo", "instalacao").increment();
         return ResponseEntity.ok(clientesService.findClienteByInstalacao(instalacao));
     }
 
-    @Operation(summary = "Buscar por Conta Contrato", description = "Retorna os dados do cliente baseado na conta contrato.")
+    @Operation(summary = "Buscar por Conta Contrato", description = "Retorna os dados do cliente baseado na conta contrato com paginação.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @GetMapping("conta-contrato/{contaContrato}")
-    public ResponseEntity<ClientesResponseDTO> findClienteByContaContrato(
+    public ResponseEntity<PaginatedClientesResponseDTO> findClienteByContaContrato(
             @Parameter(description = "Número da conta contrato", example = "7000123456")
-            @PathVariable Long contaContrato) {
+            @PathVariable Long contaContrato,
+            @Parameter(description = "Número da página (0..N)", example = "0") @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Tamanho da página", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+            @Parameter(description = "Critério de ordenação: propriedade(,asc|desc). "
+                    + "Padrão é asc. Suporte a múltiplos critérios.") @RequestParam(required = false) String[] sort,
+            Pageable pageable) {
         meterRegistry.counter("business.clientes.consultas", "tipo", "conta_contrato").increment();
-        return ResponseEntity.ok(clientesService.findClienteByContaContrato(contaContrato));
+        return ResponseEntity.ok(clientesService.findClienteByContaContrato(pageable, contaContrato));
     }
 
-    @Operation(summary = "Buscar por Número de Série", description = "Retorna os dados do cliente baseado no número de série do medidor.")
+    @Operation(summary = "Buscar por Número de Série", description = "Retorna os dados do cliente baseado no número de série do medidor com paginação.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @GetMapping("numero-serie/{numeroSerie}")
-    public ResponseEntity<ClientesResponseDTO> findClienteByNumeroSerie(
+    public ResponseEntity<PaginatedClientesResponseDTO> findClienteByNumeroSerie(
             @Parameter(description = "Número de série do medidor", example = "987654321")
-            @PathVariable Long numeroSerie) {
+            @PathVariable Long numeroSerie,
+            @Parameter(description = "Número da página (0..N)", example = "0") @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Tamanho da página", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+            @Parameter(description = "Critério de ordenação: propriedade(,asc|desc). "
+                    + "Padrão é asc. Suporte a múltiplos critérios.") @RequestParam(required = false) String[] sort,
+            Pageable pageable) {
         meterRegistry.counter("business.clientes.consultas", "tipo", "numero_serie").increment();
-        return ResponseEntity.ok(clientesService.findClienteByNumeroSerie(numeroSerie));
+        return ResponseEntity.ok(clientesService.findClienteByNumeroSerie(pageable, numeroSerie));
     }
 
-    @Operation(summary = "Buscar por Número do Poste", description = "Retorna os dados do cliente baseado no número do poste.")
+    @Operation(summary = "Buscar por Número do Poste", description = "Retorna os dados do cliente baseado no número do poste com paginação.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @GetMapping("numero-poste/{numeroPoste}")
-    public ResponseEntity<ClientesResponseDTO> findClienteByNumeroPoste(
+    public ResponseEntity<PaginatedClientesResponseDTO> findClienteByNumeroPoste(
             @Parameter(description = "Identificação do poste", example = "P-12345")
-            @PathVariable String numeroPoste) {
+            @PathVariable String numeroPoste,
+            @Parameter(description = "Número da página (0..N)", example = "0") @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Tamanho da página", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+            @Parameter(description = "Critério de ordenação: propriedade(,asc|desc). "
+                    + "Padrão é asc. Suporte a múltiplos critérios.") @RequestParam(required = false) String[] sort,
+            Pageable pageable) {
         meterRegistry.counter("business.clientes.consultas", "tipo", "numero_poste").increment();
-        return ResponseEntity.ok(clientesService.findClienteByNumeroPoste(numeroPoste));
+        return ResponseEntity.ok(clientesService.findClienteByNumeroPoste(pageable, numeroPoste));
     }
 
 }

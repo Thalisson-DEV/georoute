@@ -1,8 +1,9 @@
 package com.sipel.backend.services;
 
 import com.sipel.backend.domain.Clientes;
+import com.sipel.backend.dtos.ClienteResponseDTO;
 import com.sipel.backend.dtos.ClientesRequestDTO;
-import com.sipel.backend.dtos.ClientesResponseDTO;
+import com.sipel.backend.dtos.PaginatedClientesResponseDTO;
 import com.sipel.backend.exceptions.EntityAlreadyExistsException;
 import com.sipel.backend.mappers.ClientesMapper;
 import com.sipel.backend.repositories.ClientesRepository;
@@ -14,7 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,16 +74,16 @@ class ClientesServiceTest {
     class FindByInstalacaoTests {
 
         @Test
-        @DisplayName("Should return ClientesResponseDTO when cliente exists")
+        @DisplayName("Should return ClienteResponseDTO when cliente exists")
         void shouldReturnResponseWhenExists() {
             Long id = 123L;
             Clientes entity = new Clientes();
-            ClientesResponseDTO response = new ClientesResponseDTO(id, "Nome Teste", -23.123, -46.123);
+            ClienteResponseDTO response = new ClienteResponseDTO(id, "Nome Teste", -23.123, -46.123);
 
             when(clientesRepository.findById(id)).thenReturn(Optional.of(entity));
             when(clientesMapper.entityToDtoResponse(entity)).thenReturn(response);
 
-            ClientesResponseDTO result = clientesService.findClienteByInstalacao(id);
+            ClienteResponseDTO result = clientesService.findClienteByInstalacao(id);
 
             assertNotNull(result);
             assertEquals(id, result.instalacao());
@@ -99,33 +106,57 @@ class ClientesServiceTest {
         @DisplayName("Should find by conta contrato")
         void shouldFindByContaContrato() {
             Long cc = 456L;
+            Pageable pageable = PageRequest.of(0, 10);
             Clientes entity = new Clientes();
-            when(clientesRepository.findByContaContrato(cc)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
+            Page<Clientes> page = new PageImpl<>(List.of(entity));
+            PaginatedClientesResponseDTO responseDTO = new PaginatedClientesResponseDTO(0, 10, 1, 1, List.of(new ClienteResponseDTO(123L, "Teste", 0.0, 0.0)));
 
-            assertNotNull(clientesService.findClienteByContaContrato(cc));
+            when(clientesRepository.findAllByContaContrato(cc, pageable)).thenReturn(page);
+            when(clientesMapper.entityToDtoPaginatedResponse(page)).thenReturn(responseDTO);
+
+            assertNotNull(clientesService.findClienteByContaContrato(pageable, cc));
         }
 
         @Test
         @DisplayName("Should find by numero serie")
         void shouldFindByNumeroSerie() {
             Long ns = 789L;
+            Pageable pageable = PageRequest.of(0, 10);
             Clientes entity = new Clientes();
-            when(clientesRepository.findByNumeroSerie(ns)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
+            Page<Clientes> page = new PageImpl<>(List.of(entity));
+            PaginatedClientesResponseDTO responseDTO = new PaginatedClientesResponseDTO(0, 10, 1, 1, List.of(new ClienteResponseDTO(123L, "Teste", 0.0, 0.0)));
 
-            assertNotNull(clientesService.findClienteByNumeroSerie(ns));
+            when(clientesRepository.findAllByNumeroSerie(ns, pageable)).thenReturn(page);
+            when(clientesMapper.entityToDtoPaginatedResponse(page)).thenReturn(responseDTO);
+
+            assertNotNull(clientesService.findClienteByNumeroSerie(pageable, ns));
         }
 
         @Test
         @DisplayName("Should find by numero poste")
         void shouldFindByNumeroPoste() {
             String np = "P123";
+            Pageable pageable = PageRequest.of(0, 10);
             Clientes entity = new Clientes();
-            when(clientesRepository.findByNumeroPoste(np)).thenReturn(Optional.of(entity));
-            when(clientesMapper.entityToDtoResponse(entity)).thenReturn(new ClientesResponseDTO(123L, "Teste", 0.0, 0.0));
+            Page<Clientes> page = new PageImpl<>(List.of(entity));
+            PaginatedClientesResponseDTO responseDTO = new PaginatedClientesResponseDTO(0, 10, 1, 1, List.of(new ClienteResponseDTO(123L, "Teste", 0.0, 0.0)));
 
-            assertNotNull(clientesService.findClienteByNumeroPoste(np));
+            when(clientesRepository.findAllByNumeroPoste(np, pageable)).thenReturn(page);
+            when(clientesMapper.entityToDtoPaginatedResponse(page)).thenReturn(responseDTO);
+
+            assertNotNull(clientesService.findClienteByNumeroPoste(pageable, np));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when conta contrato not found")
+        void shouldThrowExceptionWhenContaContratoNotFound() {
+            Long cc = 456L;
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Clientes> emptyPage = Page.empty();
+
+            when(clientesRepository.findAllByContaContrato(cc, pageable)).thenReturn(emptyPage);
+
+            assertThrows(EntityNotFoundException.class, () -> clientesService.findClienteByContaContrato(pageable, cc));
         }
     }
 }
