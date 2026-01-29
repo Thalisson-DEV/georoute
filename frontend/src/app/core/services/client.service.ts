@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Cliente } from '../interfaces/cliente.interface';
 import { ClienteRequest } from '../interfaces/cliente-request.interface';
+import { PaginatedClientesResponse } from '../interfaces/paginated-clientes-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -25,18 +26,18 @@ export class ClientService {
   }
 
   // Busca por conta contrato
-  searchByContaContrato(id: string): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.apiUrl}/conta-contrato/${id}`);
+  searchByContaContrato(id: string): Observable<PaginatedClientesResponse> {
+    return this.http.get<PaginatedClientesResponse>(`${this.apiUrl}/conta-contrato/${id}`);
   }
 
   // Busca por número de série
-  searchByNumeroSerie(id: string): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.apiUrl}/numero-serie/${id}`);
+  searchByNumeroSerie(id: string): Observable<PaginatedClientesResponse> {
+    return this.http.get<PaginatedClientesResponse>(`${this.apiUrl}/numero-serie/${id}`);
   }
 
   // Busca por número do poste
-  searchByNumeroPoste(id: string): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.apiUrl}/numero-poste/${id}`);
+  searchByNumeroPoste(id: string): Observable<PaginatedClientesResponse> {
+    return this.http.get<PaginatedClientesResponse>(`${this.apiUrl}/numero-poste/${id}`);
   }
 
   // Importar clientes via CSV
@@ -48,7 +49,7 @@ export class ClientService {
 
   // Abre o redirecionador do backend que encaminha para o Google Maps
   openInMaps(latitude: number, longitude: number): void {
-    const mapsUrl = `${this.apiUrl}/maps/redirect`;
+    const mapsUrl = `${environment.apiUrl}/maps/redirect`;
     const url = `${mapsUrl}?latitude=${latitude}&longitude=${longitude}`;
     window.open(url, '_blank');
   }

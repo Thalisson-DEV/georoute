@@ -7,6 +7,7 @@ import { ClientService } from '../../../core/services/client.service';
 import { of, throwError } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { Cliente } from '../../../core/interfaces/cliente.interface';
+import { PaginatedClientesResponse } from '../../../core/interfaces/paginated-clientes-response.interface';
 
 describe('SearchPageComponent', () => {
   let component: SearchPageComponent;
@@ -18,6 +19,14 @@ describe('SearchPageComponent', () => {
     nomeCliente: 'João da Silva',
     latitude: -23.550520,
     longitude: -46.633308
+  };
+
+  const mockPaginatedResponse: PaginatedClientesResponse = {
+    pageNumber: 0,
+    pageSize: 10,
+    totalElements: 1,
+    totalPages: 1,
+    data: [mockCliente]
   };
 
   // Create a mock service object
@@ -33,9 +42,9 @@ describe('SearchPageComponent', () => {
     // Reset mocks
     vi.clearAllMocks();
     clientServiceMock.searchByInstalacao.mockReturnValue(of(mockCliente));
-    clientServiceMock.searchByContaContrato.mockReturnValue(of(mockCliente));
-    clientServiceMock.searchByNumeroSerie.mockReturnValue(of(mockCliente));
-    clientServiceMock.searchByNumeroPoste.mockReturnValue(of(mockCliente));
+    clientServiceMock.searchByContaContrato.mockReturnValue(of(mockPaginatedResponse));
+    clientServiceMock.searchByNumeroSerie.mockReturnValue(of(mockPaginatedResponse));
+    clientServiceMock.searchByNumeroPoste.mockReturnValue(of(mockPaginatedResponse));
 
     await TestBed.configureTestingModule({
       imports: [SearchPageComponent],
@@ -63,7 +72,7 @@ describe('SearchPageComponent', () => {
     component.onSearch();
 
     expect(clientServiceMock.searchByInstalacao).toHaveBeenCalledWith('12345678');
-    expect(component.clienteResult()).toEqual(mockCliente);
+    expect(component.clienteList()).toEqual([mockCliente]);
     expect(component.isLoading()).toBe(false);
   });
 
@@ -74,7 +83,7 @@ describe('SearchPageComponent', () => {
     component.onSearch();
 
     expect(clientServiceMock.searchByContaContrato).toHaveBeenCalledWith('7000123456');
-    expect(component.clienteResult()).toEqual(mockCliente);
+    expect(component.clienteList()).toEqual([mockCliente]);
   });
 
   it('should handle error when client not found', () => {
@@ -87,7 +96,7 @@ describe('SearchPageComponent', () => {
     component.onSearch();
 
     expect(clientServiceMock.searchByInstalacao).toHaveBeenCalledWith('999');
-    expect(component.clienteResult()).toBeNull();
+    expect(component.clienteList()).toEqual([]);
     expect(component.errorMessage()).toBe('Cliente não encontrado.');
   });
 
@@ -100,6 +109,6 @@ describe('SearchPageComponent', () => {
 
     expect(clientServiceMock.searchByInstalacao).toHaveBeenCalledWith('12345678');
     expect(clientServiceMock.openInMaps).toHaveBeenCalledWith(mockCliente.latitude, mockCliente.longitude);
-    expect(component.clienteResult()).toBeNull();
+    expect(component.clienteList()).toEqual([]); // Should not populate list if direct map is used
   });
 });

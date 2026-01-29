@@ -5,6 +5,8 @@ import { ClientService } from '../../../core/services/client.service';
 import { Cliente } from '../../../core/interfaces/cliente.interface';
 import { ClientCardComponent } from '../../../features/client-details/client-card/client-card';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PaginatedClientesResponse } from '../../../core/interfaces/paginated-clientes-response.interface';
+import { Observable } from 'rxjs';
 
 type SearchType = 'instalacao' | 'contaContrato' | 'numeroSerie' | 'numeroPoste';
 
@@ -91,9 +93,14 @@ type SearchType = 'instalacao' | 'contaContrato' | 'numeroSerie' | 'numeroPoste'
         {{ errorMessage() }}
       </div>
 
-      <!-- Result Card -->
-      <div *ngIf="clienteResult() && !directToMap" class="animate-fade-in-up">
-        <app-client-card [cliente]="clienteResult()!"></app-client-card>
+      <!-- Result Cards -->
+      <div *ngIf="clienteList().length > 0 && !directToMap" class="space-y-4">
+        <p class="text-sm text-gray-500 dark:text-gray-400 text-right">
+          Encontrado(s): {{ clienteList().length }} cliente(s)
+        </p>
+        <div *ngFor="let cliente of clienteList()" class="animate-fade-in-up">
+          <app-client-card [cliente]="cliente"></app-client-card>
+        </div>
       </div>
     </div>
   `
@@ -107,16 +114,16 @@ export class SearchPageComponent {
 
   isLoading = signal(false);
   errorMessage = signal('');
-  clienteResult = signal<Cliente | null>(null);
+  clienteList = signal<Cliente[]>([]);
 
   onSearch() {
     if (!this.searchQuery.trim()) return;
 
     this.isLoading.set(true);
     this.errorMessage.set('');
-    this.clienteResult.set(null);
+    this.clienteList.set([]);
 
-    let searchObs;
+    let searchObs: Observable<Cliente | PaginatedClientesResponse>;
 
     switch (this.searchType) {
       case 'instalacao':
@@ -134,12 +141,26 @@ export class SearchPageComponent {
     }
 
     searchObs.subscribe({
-      next: (cliente) => {
+      next: (response) => {
         this.isLoading.set(false);
-        if (this.directToMap) {
-          this.clientService.openInMaps(cliente.latitude, cliente.longitude);
+        
+        let clientes: Cliente[] = [];
+
+        if (this.searchType === 'instalacao') {
+           // Single object
+           clientes = [response as Cliente];
         } else {
-          this.clienteResult.set(cliente);
+           // Paginated object
+           const paginated = response as PaginatedClientesResponse;
+           clientes = paginated.data || [];
+        }
+
+        if (this.directToMap && clientes.length > 0) {
+          // If direct to map is checked, we take the first one (or maybe we should warn if multiple?)
+          // For now, taking the first one seems logical as a fallback.
+          this.clientService.openInMaps(clientes[0].latitude, clientes[0].longitude);
+        } else {
+          this.clienteList.set(clientes);
         }
       },
       error: (err: HttpErrorResponse) => {
