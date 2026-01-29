@@ -160,7 +160,7 @@ O projeto já nasce instrumentado para monitoramento.
 O projeto está em evolução. As seguintes melhorias estão planejadas:
 
 - [x] **Documentação:** Implementar Swagger UI / OpenAPI para documentação interativa das rotas e schemas.
-- [ ] **Segurança:** Adicionar camada de segurança (Spring Security) para proteger as rotas de escrita (`POST /clientes` e `importação`), exigindo autenticação.
+- [x] **Segurança:** Adicionar camada de segurança (Spring Security) para proteger as rotas de escrita (`POST /clientes` e `importação`), exigindo autenticação.
 
 ## 🤝 Contribuição
 

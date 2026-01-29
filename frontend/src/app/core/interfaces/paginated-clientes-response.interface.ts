@@ -6,4 +6,5 @@ export interface PaginatedClientesResponse {
   totalElements: number;
   totalPages: number;
   data: Cliente[];
+  content?: Cliente[];
 }
