@@ -10,7 +10,6 @@ import com.sipel.backend.exceptions.RouteProcessingException;
 import com.sipel.backend.repositories.EquipesRepository;
 import com.sipel.backend.repositories.ExecucoesRotaRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;

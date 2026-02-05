@@ -1,6 +1,5 @@
 package com.sipel.backend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sipel.backend.dtos.RouteRequestDTO;
 import com.sipel.backend.dtos.ors.OrsOptimizationResponseDTO;
 import com.sipel.backend.services.RouteService;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 
 import java.io.IOException;
 

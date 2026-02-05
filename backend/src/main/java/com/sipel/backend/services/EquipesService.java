@@ -8,7 +8,6 @@ import com.sipel.backend.exceptions.EntityAlreadyExistsException;
 import com.sipel.backend.mappers.EquipesMapper;
 import com.sipel.backend.repositories.EquipesRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
