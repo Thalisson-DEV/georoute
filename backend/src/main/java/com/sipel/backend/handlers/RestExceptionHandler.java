@@ -95,4 +95,30 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(exceptionResponse);
     }
 
+    @ExceptionHandler(com.fasterxml.jackson.core.JsonProcessingException.class)
+    public ResponseEntity<RestExceptionResponseDTO> handleJsonProcessingException(com.fasterxml.jackson.core.JsonProcessingException e) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(
+                LocalDateTime.now(),
+                "Erro ao processar JSON: " + e.getMessage(),
+                status.value()
+        );
+
+        return ResponseEntity.status(status).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(org.springframework.web.reactive.function.client.WebClientResponseException.class)
+    public ResponseEntity<RestExceptionResponseDTO> handleWebClientResponseException(org.springframework.web.reactive.function.client.WebClientResponseException e) {
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+
+        RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(
+                LocalDateTime.now(),
+                "Erro na API de Rotas: " + e.getMessage(),
+                status.value()
+        );
+
+        return ResponseEntity.status(status).body(exceptionResponse);
+    }
+
 }

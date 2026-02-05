@@ -1,8 +1,8 @@
 global:
-  scrape_interval: 10s # Aumentado levemente para economizar recursos em produção
+  scrape_interval: 5s
 
 scrape_configs:
-  - job_name: 'sipel-backend'
+  - job_name: 'sipel_backend_local'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['backend.railway.internal:8080'] # Padrão de rede interna do Railway
+      - targets: ['host.docker.internal:8080']
