@@ -1,5 +1,7 @@
 package com.sipel.backend.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sipel.backend.dtos.RouteHistoryDTO;
 import com.sipel.backend.dtos.RouteRequestDTO;
 import com.sipel.backend.dtos.ors.OrsOptimizationResponseDTO;
 import com.sipel.backend.services.RouteService;
@@ -9,13 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-
-import java.io.IOException;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/routes")
@@ -34,9 +32,29 @@ public class RouteController {
             @ApiResponse(responseCode = "404", description = "Equipe não encontrada"),
             @ApiResponse(responseCode = "500", description = "Erro interno ao calcular rota")
     })
-    public ResponseEntity<OrsOptimizationResponseDTO> optimizeRoute(@RequestBody RouteRequestDTO routeRequest) throws IOException {
-        OrsOptimizationResponseDTO response;
-        response = routeService.calculateRoute(routeRequest);
+    public ResponseEntity<OrsOptimizationResponseDTO> optimizeRoute(@RequestBody @Valid RouteRequestDTO routeRequest) throws JsonProcessingException {
+        OrsOptimizationResponseDTO response = routeService.calculateRoute(routeRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/history/{teamId}")
+    @Operation(summary = "Histórico de Rotas", description = "Retorna o histórico de rotas calculadas para uma equipe.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Histórico recuperado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Equipe não encontrada")
+    })
+    public ResponseEntity<List<RouteHistoryDTO>> getRouteHistory(@PathVariable Long teamId) {
+        return ResponseEntity.ok(routeService.getRouteHistory(teamId));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Detalhes da Rota", description = "Retorna o JSON completo de uma rota executada pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Detalhes recuperados com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Rota não encontrada"),
+            @ApiResponse(responseCode = "500", description = "Erro ao processar dados da rota")
+    })
+    public ResponseEntity<OrsOptimizationResponseDTO> getRouteDetails(@PathVariable String id) throws JsonProcessingException {
+        return ResponseEntity.ok(routeService.getRouteDetails(id));
     }
 }
