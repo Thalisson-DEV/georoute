@@ -42,3 +42,6 @@ api:
 app:
   frontend:
     url: ${FRONTEND_URL}
+  openrouteservice:
+    url: https://api.openrouteservice.org/optimization
+    api-key: ${ORS_API_KEY}
