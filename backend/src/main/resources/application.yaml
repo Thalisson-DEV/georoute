@@ -5,7 +5,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   application:
-    name: georoute-api                                                                                                                                                      │
+    name: georoute-api
   profiles:
     active: dev
   servlet:
@@ -14,8 +14,8 @@ spring:
       max-request-size: 100MB
   datasource:
     url: jdbc:postgresql://localhost:5432/georoute-api
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:paodepovilho2003}
 
 
 management:
@@ -35,3 +35,6 @@ api:
 app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:4200}
+  openrouteservice:
+    url: https://api.openrouteservice.org/optimization
+    api-key: ${ORS_API_KEY}

@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/clientes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/maps/redirect").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/routes/optimize").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
