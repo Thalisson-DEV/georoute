@@ -21,7 +21,7 @@
 
 ## 📖 Sobre o Projeto
 
-Esta é uma API RESTful robusta desenvolvida para auxiliar em processos logísticos da Sipel. O sistema centraliza o cadastro e consulta de informações de clientes (instalação, conta contrato, geolocalização) e oferece integração inteligente para redirecionamento de rotas.
+Esta é uma API RESTful robusta desenvolvida para auxiliar em processos logísticos da Sipel. O sistema centraliza o cadastro e consulta de informações de clientes (instalação, conta contrato, geolocalização), gerenciamento de equipes e oferece integração inteligente para otimização de rotas.
 
 O projeto foi desenhado com foco em **Alta Disponibilidade** e **Observabilidade**, incluindo suporte nativo a métricas de negócio.
 
@@ -37,6 +37,8 @@ O projeto utiliza uma stack moderna baseada no ecossistema Spring:
 - **SpringDoc OpenAPI (Swagger)**: Documentação interativa e padronizada da API.
 - **Redis**: Caching distribuído para alta performance.
 - **OpenCSV**: Processamento assíncrono de grandes volumes de dados (Importação).
+- **WebClient (WebFlux)**: Consumo de APIs externas de forma eficiente.
+- **OpenRouteService (ORS)**: Motor de otimização de rotas logísticas.
 - **Micrometer/Prometheus**: Coleta de métricas de aplicação e negócios.
 - **Docker & Docker Compose**: Orquestração de containers (DB, Cache, Monitoramento).
 
@@ -48,11 +50,43 @@ A aplicação segue uma arquitetura em camadas clássica e limpa:
 src/main/java/com/sipel/backend/
 ├── controllers/         # Endpoints REST (Exposição)
 ├── services/            # Lógica de Negócios
-├── domain/              # Entidades JPA
+├── domain/              # Entidades JPA e Enums
 ├── repositories/        # Acesso a Dados (Spring Data)
 ├── mappers/             # Conversores (Entity <-> DTO)
 ├── dtos/                # Objetos de Transferência de Dados
-└── infra/               # Infraestrutura (CSV, Configurações, Exceptions)
+└── infra/               # Infraestrutura (CSV, Configurações, Segurança)
+```
+
+### Diagrama de Dependências
+
+Abaixo, a relação entre os componentes do novo módulo de rotas:
+
+```mermaid
+classDiagram
+    class RouteController {
+        +optimizeRoute(RouteRequestDTO)
+    }
+    class EquipesController {
+        +saveEquipe(EquipesRequestDTO)
+        +findAllEquipes(SetorEnum)
+    }
+    class RouteService {
+        +calculateRoute()
+    }
+    class EquipesService {
+        +saveEquipe()
+        +updateEquipe()
+    }
+    class OpenRouteServiceAPI {
+        <<External Service>>
+    }
+
+    RouteController --> RouteService : usa
+    EquipesController --> EquipesService : usa
+    RouteService --> RouteMapper : converte DTOs
+    RouteService --> Redis : cache (24h)
+    RouteService --> OpenRouteServiceAPI : requisição HTTP
+    EquipesService --> EquipesRepository : persistência
 ```
 
 ## 🛠️ Instalação e Configuração
@@ -61,15 +95,16 @@ src/main/java/com/sipel/backend/
 
 Para o deploy no Railway:
 1. A aplicação utiliza o perfil `prod` via `Procfile`.
-2. Utilize os **Add-ons nativos** do Railway para PostgreSQL e Redis.
-3. A observabilidade é feita de forma nativa pelo painel do Railway (Metrics/Logs).
-4. O `docker-compose.yaml` é ignorado no deploy da API.
+2. Configure a variável `ORS_API_KEY` no painel do Railway.
+3. Utilize os **Add-ons nativos** do Railway para PostgreSQL e Redis.
+4. A observabilidade é feita de forma nativa pelo painel do Railway (Metrics/Logs).
 
 ### 💻 Desenvolvimento Local
 
 #### Pré-requisitos
 - **Java 21** instalado.
 - **Docker** e **Docker Compose** instalados.
+- Chave de API do OpenRouteService.
 
 #### Passo a Passo
 
@@ -80,25 +115,17 @@ Para o deploy no Railway:
    ```
 
 2. **Suba a Infraestrutura Local**
-   O projeto utiliza Docker para gerenciar dependências externas em ambiente de desenvolvimento.
    ```bash
    docker-compose up -d
    ```
-   *Nota: Certifique-se de ter uma instância PostgreSQL rodando localmente na porta 5432 ou ajuste o `docker-compose.yaml` para incluir o banco.*
 
 3. **Configuração de Variáveis de Ambiente**
-   Configure as credenciais do banco de dados no seu ambiente ou em um arquivo `.env` (se configurado).
    
    **Linux/Mac:**
    ```bash
    export DB_USERNAME=seu_usuario
    export DB_PASSWORD=sua_senha
-   ```
-
-   **Windows (PowerShell):**
-   ```powershell
-   $env:DB_USERNAME="seu_usuario"
-   $env:DB_PASSWORD="sua_senha"
+   export ORS_API_KEY=sua_chave_ors
    ```
 
 4. **Compile e Execute**
@@ -107,68 +134,53 @@ Para o deploy no Railway:
    ./mvnw spring-boot:run
    ```
 
-   A API iniciará em `http://localhost:8080`.
-
 ## 📚 Documentação Interativa (Swagger)
 
-A API possui documentação completa via **Swagger UI**, permitindo testar requisições diretamente pelo navegador e visualizar os schemas de dados.
-
 - **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-- **JSON Docs**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
-
-Utilize essa interface para entender os parâmetros necessários, formatos de resposta e códigos de erro de cada endpoint.
 
 ## 🔌 Endpoints da API
 
 ### 👤 Clientes
-Gerenciamento de dados dos clientes e instalações.
-
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/v1/clientes` | Cadastra um novo cliente |
 | `POST` | `/api/v1/clientes/import` | Importação em massa via arquivo CSV (Async) |
-| `GET` | `/api/v1/clientes/instalacao/{id}` | Busca por Número de Instalação (Cache Individual) |
-| `GET` | `/api/v1/clientes/conta-contrato/{id}` | Busca por Conta Contrato (Paginado & Cacheado) |
-| `GET` | `/api/v1/clientes/numero-serie/{id}` | Busca por Número de Série (Paginado & Cacheado) |
-| `GET` | `/api/v1/clientes/numero-poste/{id}` | Busca por Identificador do Poste (Paginado & Cacheado) |
+| `GET` | `/api/v1/clientes/instalacao/{id}` | Busca por Número de Instalação |
+
+### 👥 Equipes
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/v1/equipes` | Cadastra uma nova equipe |
+| `GET` | `/api/v1/equipes` | Lista equipes (filtro opcional por `setor`) |
+| `PUT` | `/api/v1/equipes/{id}` | Atualiza dados de uma equipe |
+| `DELETE` | `/api/v1/equipes/{id}` | Remove uma equipe |
+
+### 🛣️ Rotas
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/v1/routes/optimize` | Calcula a rota otimizada para uma equipe e lista de clientes |
 
 ### 🔐 Autenticação & Usuários
-Gerenciamento de acesso e tokens.
-
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/v1/auth/login` | Autentica um usuário e retorna um token JWT |
 | `POST` | `/api/v1/user/register` | Cadastra um novo usuário |
 
 ### 🗺️ Mapas
-Integração com serviços de geolocalização.
-
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/api/v1/maps/redirect` | Redireciona para o Google Maps com base nas coordenadas |
+| `GET` | `/api/v1/maps/redirect` | Redireciona para o Google Maps |
 
 ## 📊 Observabilidade
 
-O projeto já nasce instrumentado para monitoramento.
-
-- **Grafana:** `http://localhost:3000` (Visualize dashboards de performance e métricas de negócio).
+- **Grafana:** `http://localhost:3000`.
 - **Prometheus:** `http://localhost:9090`.
-- **Métricas de Negócio:** Acompanhe o volume de consultas por tipo (`business.clientes.consultas`).
-
-## 📝 Roadmap & TODO
-
-O projeto está em evolução. As seguintes melhorias estão planejadas:
-
-- [x] **Documentação:** Implementar Swagger UI / OpenAPI para documentação interativa das rotas e schemas.
-- [x] **Segurança:** Adicionar camada de segurança (Spring Security) para proteger as rotas de escrita (`POST /clientes` e `importação`), exigindo autenticação.
 
 ## 🤝 Contribuição
 
 1. Faça um Fork do projeto
 2. Crie uma Branch para sua Feature (`git checkout -b feature/NovaFeature`)
-3. Faça o Commit (`git commit -m 'Add: nova funcionalidade'`)
-4. Faça o Push (`git push origin feature/NovaFeature`)
-5. Abra um Pull Request
+3. Abra um Pull Request
 
 ---
 <p align="center">
