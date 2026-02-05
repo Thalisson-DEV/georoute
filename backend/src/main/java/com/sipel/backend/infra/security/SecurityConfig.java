@@ -37,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/clientes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/maps/redirect").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/routes/optimize").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/routes/history/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/routes/{id}").permitAll()
                         .requestMatchers("/api/v1/equipes/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/**").permitAll()

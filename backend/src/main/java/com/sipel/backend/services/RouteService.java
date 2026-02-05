@@ -1,5 +1,6 @@
 package com.sipel.backend.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sipel.backend.domain.Equipes;
 import com.sipel.backend.domain.ExecucoesRota;
@@ -7,24 +8,30 @@ import com.sipel.backend.dtos.RouteRequestDTO;
 import com.sipel.backend.dtos.ors.OrsOptimizationRequestDTO;
 import com.sipel.backend.dtos.ors.OrsOptimizationResponseDTO;
 import com.sipel.backend.exceptions.RouteProcessingException;
+import com.sipel.backend.mappers.RouteHistoryMapper;
+import com.sipel.backend.mappers.RouteMapper;
 import com.sipel.backend.repositories.EquipesRepository;
 import com.sipel.backend.repositories.ExecucoesRotaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
+import jakarta.validation.Valid;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-
 @Service
+@RequiredArgsConstructor
 @Validated
 public class RouteService {
 
@@ -33,7 +40,8 @@ public class RouteService {
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
     private final WebClient.Builder webClientBuilder;
-    private final com.sipel.backend.mappers.RouteMapper routeMapper;
+    private final RouteMapper routeMapper;
+    private final RouteHistoryMapper routeHistoryMapper;
 
     @Value("${app.openrouteservice.url}")
     private String orsUrl;
@@ -41,16 +49,9 @@ public class RouteService {
     @Value("${app.openrouteservice.api-key}")
     private String orsApiKey;
 
-    public RouteService(EquipesRepository equipesRepository, ExecucoesRotaRepository execucoesRotaRepository, StringRedisTemplate redisTemplate, ObjectMapper objectMapper, WebClient.Builder webClientBuilder, com.sipel.backend.mappers.RouteMapper routeMapper) {
-        this.equipesRepository = equipesRepository;
-        this.execucoesRotaRepository = execucoesRotaRepository;
-        this.redisTemplate = redisTemplate;
-        this.objectMapper = objectMapper;
-        this.webClientBuilder = webClientBuilder;
-        this.routeMapper = routeMapper;
-    }
-
-    public OrsOptimizationResponseDTO calculateRoute(@Valid RouteRequestDTO request) throws IOException {
+    @CacheEvict(value = "historico_rotas", key = "#request.teamId()")
+    public OrsOptimizationResponseDTO calculateRoute(@Valid RouteRequestDTO request) throws JsonProcessingException {
+        // Passo A: Definição de Origem/Destino
         Double startLat = request.currentLat();
         Double startLon = request.currentLon();
 
@@ -61,8 +62,10 @@ public class RouteService {
             startLon = equipe.getLongitudeBase();
         }
 
+        // Passo B: Verificação de Cache (Redis)
         LocalDate today = LocalDate.now();
-        String cacheKey = String.format("rota:equipe:%d:data:%s", request.teamId(), today);
+        String clientsHash = String.valueOf(request.clients().hashCode());
+        String cacheKey = String.format("rota:equipe:%d:data:%s:clients:%s", request.teamId(), today, clientsHash);
 
         String cachedRoute = redisTemplate.opsForValue().get(cacheKey);
         if (cachedRoute != null) {
@@ -73,6 +76,7 @@ public class RouteService {
             return objectMapper.readValue(trimmedRoute, OrsOptimizationResponseDTO.class);
         }
 
+        // Passo C: Chamada Externa (OpenRouteService)
         OrsOptimizationRequestDTO orsRequest = routeMapper.toOrsRequest(request.clients(), startLat, startLon);
 
         OrsOptimizationResponseDTO response = webClientBuilder.build()
@@ -85,22 +89,52 @@ public class RouteService {
                 .bodyToMono(OrsOptimizationResponseDTO.class)
                 .block();
 
+        // Passo D: Persistência e Cache
         if (response != null) {
             String jsonResponse = objectMapper.writeValueAsString(response);
 
+            // Save to Redis
             redisTemplate.opsForValue().set(cacheKey, jsonResponse, Duration.ofHours(24));
 
+            // Save to DB
             ExecucoesRota execution = new ExecucoesRota();
             execution.setEquipeId(request.teamId());
             execution.setData(today);
             execution.setRotaJson(jsonResponse);
 
             Optional<ExecucoesRota> existing = execucoesRotaRepository.findByEquipeIdAndData(request.teamId(), today);
-            existing.ifPresent(execucoesRota -> execution.setId(execucoesRota.getId()));
+            if (existing.isPresent()) {
+                execution.setId(existing.get().getId());
+            }
 
             execucoesRotaRepository.save(execution);
         }
 
         return response;
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "historico_rotas", key = "#teamId")
+    public java.util.List<com.sipel.backend.dtos.RouteHistoryDTO> getRouteHistory(Long teamId) {
+        if (!equipesRepository.existsById(teamId)) {
+            throw new EntityNotFoundException("Equipe não encontrada com ID: " + teamId);
+        }
+        return routeHistoryMapper.toDTOList(execucoesRotaRepository.findAllByEquipeIdOrderByDataDesc(teamId));
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *") // Toda meia-noite
+    @CacheEvict(value = "historico_rotas", allEntries = true) // Limpa cache pois históricos antigos sumiram
+    public void cleanupOldRoutes() {
+        LocalDate cutoffDate = LocalDate.now().minusDays(2);
+        execucoesRotaRepository.deleteOlderThan(cutoffDate);
+    }
+
+    @Transactional(readOnly = true)
+    public OrsOptimizationResponseDTO getRouteDetails(String id) throws JsonProcessingException {
+        ExecucoesRota execution = execucoesRotaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Rota não encontrada com ID: " + id));
+        
+        return objectMapper.readValue(execution.getRotaJson(), OrsOptimizationResponseDTO.class);
     }
 }
