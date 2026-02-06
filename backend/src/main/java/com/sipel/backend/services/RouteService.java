@@ -51,7 +51,6 @@ public class RouteService {
 
     @CacheEvict(value = "historico_rotas", key = "#request.teamId()")
     public OrsOptimizationResponseDTO calculateRoute(@Valid RouteRequestDTO request) throws JsonProcessingException {
-        // Passo A: Definição de Origem/Destino
         Double startLat = request.currentLat();
         Double startLon = request.currentLon();
 
@@ -62,10 +61,11 @@ public class RouteService {
             startLon = equipe.getLongitudeBase();
         }
 
-        // Passo B: Verificação de Cache (Redis)
         LocalDate today = LocalDate.now();
         String clientsHash = String.valueOf(request.clients().hashCode());
-        String cacheKey = String.format("rota:equipe:%d:data:%s:clients:%s", request.teamId(), today, clientsHash);
+        // Incluir coordenadas de inicio na chave de cache para diferenciar rotas saindo da base vs local atual
+        String startPointKey = String.format("%.4f,%.4f", startLat, startLon);
+        String cacheKey = String.format("rota:equipe:%d:data:%s:start:%s:clients:%s", request.teamId(), today, startPointKey, clientsHash);
 
         String cachedRoute = redisTemplate.opsForValue().get(cacheKey);
         if (cachedRoute != null) {
@@ -76,7 +76,7 @@ public class RouteService {
             return objectMapper.readValue(trimmedRoute, OrsOptimizationResponseDTO.class);
         }
 
-        // Passo C: Chamada Externa (OpenRouteService)
+
         OrsOptimizationRequestDTO orsRequest = routeMapper.toOrsRequest(request.clients(), startLat, startLon);
 
         OrsOptimizationResponseDTO response = webClientBuilder.build()
@@ -89,23 +89,19 @@ public class RouteService {
                 .bodyToMono(OrsOptimizationResponseDTO.class)
                 .block();
 
-        // Passo D: Persistência e Cache
+
         if (response != null) {
             String jsonResponse = objectMapper.writeValueAsString(response);
 
-            // Save to Redis
             redisTemplate.opsForValue().set(cacheKey, jsonResponse, Duration.ofHours(24));
 
-            // Save to DB
             ExecucoesRota execution = new ExecucoesRota();
             execution.setEquipeId(request.teamId());
             execution.setData(today);
             execution.setRotaJson(jsonResponse);
 
             Optional<ExecucoesRota> existing = execucoesRotaRepository.findByEquipeIdAndData(request.teamId(), today);
-            if (existing.isPresent()) {
-                execution.setId(existing.get().getId());
-            }
+            existing.ifPresent(execucoesRota -> execution.setId(execucoesRota.getId()));
 
             execucoesRotaRepository.save(execution);
         }
@@ -124,7 +120,7 @@ public class RouteService {
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *") // Toda meia-noite
-    @CacheEvict(value = "historico_rotas", allEntries = true) // Limpa cache pois históricos antigos sumiram
+    @CacheEvict(value = "historico_rotas", allEntries = true)
     public void cleanupOldRoutes() {
         LocalDate cutoffDate = LocalDate.now().minusDays(2);
         execucoesRotaRepository.deleteOlderThan(cutoffDate);
