@@ -4,15 +4,17 @@ import { HelpPageComponent } from './features/help/help-page/help-page';
 import { LoginPageComponent } from './features/auth/login-page/login-page';
 import { SaveClientComponent } from './features/admin/save-client/save-client';
 import { ImportClientsComponent } from './features/admin/import-clients/import-clients';
+import { RoutePlannerComponent } from './features/routes/route-planner/route-planner';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'search', pathMatch: 'full' },
   { path: 'search', component: SearchPageComponent, title: 'GeoRoute - Buscar Clientes' },
+  { path: 'routes', component: RoutePlannerComponent, title: 'GeoRoute - Roteirização' },
   { 
     path: 'register', 
     component: SaveClientComponent, 
-    title: 'GeoRoute - Cadastrar Cliente',
+    title: 'GeoRoute - Cadastro',
     canActivate: [authGuard] 
   },
   { 
