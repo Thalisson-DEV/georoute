@@ -1,5 +1,6 @@
 package com.sipel.backend.handlers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sipel.backend.dtos.RestExceptionResponseDTO;
 import com.sipel.backend.exceptions.CsvImportException;
 import com.sipel.backend.exceptions.EntityAlreadyExistsException;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -95,26 +97,26 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(exceptionResponse);
     }
 
-    @ExceptionHandler(com.fasterxml.jackson.core.JsonProcessingException.class)
-    public ResponseEntity<RestExceptionResponseDTO> handleJsonProcessingException(com.fasterxml.jackson.core.JsonProcessingException e) {
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<RestExceptionResponseDTO> handleJsonProcessingException(JsonProcessingException e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(
                 LocalDateTime.now(),
-                "Erro ao processar JSON: " + e.getMessage(),
+                e.getMessage(),
                 status.value()
         );
 
         return ResponseEntity.status(status).body(exceptionResponse);
     }
 
-    @ExceptionHandler(org.springframework.web.reactive.function.client.WebClientResponseException.class)
-    public ResponseEntity<RestExceptionResponseDTO> handleWebClientResponseException(org.springframework.web.reactive.function.client.WebClientResponseException e) {
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<RestExceptionResponseDTO> handleWebClientResponseException(WebClientResponseException e) {
         HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
 
         RestExceptionResponseDTO exceptionResponse = new RestExceptionResponseDTO(
                 LocalDateTime.now(),
-                "Erro na API de Rotas: " + e.getMessage(),
+                e.getMessage(),
                 status.value()
         );
 

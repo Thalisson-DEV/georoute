@@ -65,7 +65,7 @@ public class EquipesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "equipes", key = "#setor != null ? #setor.name() : 'ALL'")
+    @Cacheable(value = "equipes", key = "#setor == null ? 'ALL' : #setor.name()")
     public List<EquipesResponseDTO> findAllEquipes(SetorEnum setor) {
         List<Equipes> equipes;
         if (setor != null) {

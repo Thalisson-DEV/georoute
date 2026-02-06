@@ -1,100 +1,148 @@
-<div class="max-w-2xl mx-auto">
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-geoblue-900 dark:text-geoblue-100">Cadastrar Novo Cliente</h1>
-    <p class="text-gray-600 dark:text-gray-400">Preencha as informações abaixo para adicionar um novo ponto de atendimento.</p>
+<div class="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
+  
+  <div class="text-center space-y-2">
+    <h1 class="text-3xl font-bold text-geoblue-900 dark:text-geoblue-100">Área de Cadastro</h1>
+    <p class="text-gray-600 dark:text-gray-400">Gerencie o cadastro de clientes e equipes do sistema.</p>
   </div>
 
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-    <form (ngSubmit)="onSubmit()" #clientForm="ngForm" class="space-y-6">
-      
-      <!-- Nome do Cliente -->
-      <div>
-        <label for="nomeCliente" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Cliente</label>
-        <input type="text" id="nomeCliente" name="nomeCliente" [(ngModel)]="client.nomeCliente" required
-          class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-          placeholder="Ex: João Silva">
-      </div>
+  <!-- Tabs -->
+  <div class="border-b border-gray-200 dark:border-gray-700">
+    <nav class="-mb-px flex justify-center space-x-8" aria-label="Tabs">
+      <button (click)="setActiveTab('clientes')"
+         [class.border-geoblue-500]="activeTab() === 'clientes'"
+         [class.text-geoblue-600]="activeTab() === 'clientes'"
+         [class.dark:text-geoblue-400]="activeTab() === 'clientes'"
+         [class.border-transparent]="activeTab() !== 'clientes'"
+         [class.text-gray-500]="activeTab() !== 'clientes'"
+         [class.dark:text-gray-400]="activeTab() !== 'clientes'"
+         class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-lg hover:text-geoblue-600 dark:hover:text-geoblue-400 hover:border-geoblue-300 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+             [class.text-geoblue-500]="activeTab() === 'clientes'" 
+             [class.dark:text-geoblue-400]="activeTab() === 'clientes'"
+             class="mr-2 h-5 w-5 group-hover:text-geoblue-500 dark:group-hover:text-geoblue-400">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+        </svg>
+        Clientes
+      </button>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Instalação -->
+      <button (click)="setActiveTab('equipes')"
+         [class.border-geoblue-500]="activeTab() === 'equipes'"
+         [class.text-geoblue-600]="activeTab() === 'equipes'"
+         [class.dark:text-geoblue-400]="activeTab() === 'equipes'"
+         [class.border-transparent]="activeTab() !== 'equipes'"
+         [class.text-gray-500]="activeTab() !== 'equipes'"
+         [class.dark:text-gray-400]="activeTab() !== 'equipes'"
+         class="group inline-flex items-center py-4 px-1 border-b-2 font-medium text-lg hover:text-geoblue-600 dark:hover:text-geoblue-400 hover:border-geoblue-300 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+             [class.text-geoblue-500]="activeTab() === 'equipes'" 
+             [class.dark:text-geoblue-400]="activeTab() === 'equipes'"
+             class="mr-2 h-5 w-5 group-hover:text-geoblue-500 dark:group-hover:text-geoblue-400">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+        Equipes
+      </button>
+    </nav>
+  </div>
+
+  <!-- Tab Content: Clientes -->
+  <div *ngIf="activeTab() === 'clientes'" class="animate-fade-in">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+      <form (ngSubmit)="onSubmitClient()" #clientForm="ngForm" class="space-y-6">
+        
+        <!-- Nome do Cliente -->
         <div>
-          <label for="instalacao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Instalação</label>
-          <input type="number" id="instalacao" name="instalacao" [(ngModel)]="client.instalacao" required
+          <label for="nomeCliente" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Cliente</label>
+          <input type="text" id="nomeCliente" name="nomeCliente" [(ngModel)]="client.nomeCliente" required
             class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="0000000000">
+            placeholder="Ex: João Silva">
         </div>
-
-        <!-- Conta Contrato -->
-        <div>
-          <label for="contaContrato" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Conta Contrato</label>
-          <input type="number" id="contaContrato" name="contaContrato" [(ngModel)]="client.contaContrato" required
-            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="0000000000">
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Instalação -->
+          <div>
+            <label for="instalacao" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Instalação</label>
+            <input type="number" id="instalacao" name="instalacao" [(ngModel)]="client.instalacao" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="0000000000">
+          </div>
+  
+          <!-- Conta Contrato -->
+          <div>
+            <label for="contaContrato" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Conta Contrato</label>
+            <input type="number" id="contaContrato" name="contaContrato" [(ngModel)]="client.contaContrato" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="0000000000">
+          </div>
         </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Número de Série -->
-        <div>
-          <label for="numeroSerie" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Série Medidor</label>
-          <input type="number" id="numeroSerie" name="numeroSerie" [(ngModel)]="client.numeroSerie" required
-            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="000000000">
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Número de Série -->
+          <div>
+            <label for="numeroSerie" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Série Medidor</label>
+            <input type="number" id="numeroSerie" name="numeroSerie" [(ngModel)]="client.numeroSerie" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="000000000">
+          </div>
+  
+          <!-- Número do Poste -->
+          <div>
+            <label for="numeroPoste" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Poste</label>
+            <input type="text" id="numeroPoste" name="numeroPoste" [(ngModel)]="client.numeroPoste" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="P000000">
+          </div>
         </div>
-
-        <!-- Número do Poste -->
-        <div>
-          <label for="numeroPoste" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº Poste</label>
-          <input type="text" id="numeroPoste" name="numeroPoste" [(ngModel)]="client.numeroPoste" required
-            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="P000000">
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-md border border-gray-100 dark:border-gray-800">
+          <!-- Latitude -->
+          <div>
+            <label for="latitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Latitude</label>
+            <input type="number" step="any" id="latitude" name="latitude" [(ngModel)]="client.latitude" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="-23.5505">
+          </div>
+  
+          <!-- Longitude -->
+          <div>
+            <label for="longitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Longitude</label>
+            <input type="number" step="any" id="longitude" name="longitude" [(ngModel)]="client.longitude" required
+              class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
+              placeholder="-46.6333">
+          </div>
         </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-md border border-gray-100 dark:border-gray-800">
-        <!-- Latitude -->
-        <div>
-          <label for="latitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Latitude</label>
-          <input type="number" step="any" id="latitude" name="latitude" [(ngModel)]="client.latitude" required
-            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="-23.5505">
+  
+        <!-- Messages -->
+        <div *ngIf="successMessage()" class="p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+          {{ successMessage() }}
         </div>
-
-        <!-- Longitude -->
-        <div>
-          <label for="longitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Longitude</label>
-          <input type="number" step="any" id="longitude" name="longitude" [(ngModel)]="client.longitude" required
-            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-geoblue-500 outline-none transition-shadow"
-            placeholder="-46.6333">
+        
+        <div *ngIf="errorMessage()" class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+          {{ errorMessage() }}
         </div>
-      </div>
+  
+        <!-- Action Buttons -->
+        <div class="flex space-x-4">
+          <button type="button" (click)="clientForm.reset()"
+            class="flex-1 px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Limpar
+          </button>
+          <button type="submit" [disabled]="isLoading() || !clientForm.form.valid"
+            class="flex-[2] bg-geoblue-600 hover:bg-geoblue-700 disabled:bg-geoblue-400 text-white font-bold py-3 px-4 rounded-md shadow transition-colors flex justify-center items-center">
+            <span *ngIf="isLoading()" class="mr-2">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{ isLoading() ? 'Salvando...' : 'Salvar Cliente' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-      <!-- Messages -->
-      <div *ngIf="successMessage()" class="p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-        {{ successMessage() }}
-      </div>
-      
-      <div *ngIf="errorMessage()" class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
-        {{ errorMessage() }}
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex space-x-4">
-        <button type="button" (click)="clientForm.reset()"
-          class="flex-1 px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-          Limpar
-        </button>
-        <button type="submit" [disabled]="isLoading() || !clientForm.form.valid"
-          class="flex-[2] bg-geoblue-600 hover:bg-geoblue-700 disabled:bg-geoblue-400 text-white font-bold py-3 px-4 rounded-md shadow transition-colors flex justify-center items-center">
-          <span *ngIf="isLoading()" class="mr-2">
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </span>
-          {{ isLoading() ? 'Salvando...' : 'Salvar Cliente' }}
-        </button>
-      </div>
-    </form>
+  <!-- Tab Content: Equipes -->
+  <div *ngIf="activeTab() === 'equipes'" class="animate-fade-in">
+    <app-manage-teams></app-manage-teams>
   </div>
 </div>

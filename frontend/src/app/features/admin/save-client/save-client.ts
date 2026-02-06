@@ -4,11 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientService } from '../../../core/services/client.service';
 import { ClienteRequest } from '../../../core/interfaces/cliente-request.interface';
+import { ManageTeamsComponent } from '../manage-teams/manage-teams';
+
+type TabType = 'clientes' | 'equipes';
 
 @Component({
   selector: 'app-save-client',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ManageTeamsComponent],
   templateUrl: './save-client.html',
   styleUrl: './save-client.css',
 })
@@ -16,6 +19,9 @@ export class SaveClientComponent {
   private clientService = inject(ClientService);
   private router = inject(Router);
 
+  activeTab = signal<TabType>('clientes');
+
+  // Client Form State
   client: ClienteRequest = {
     instalacao: 0,
     contaContrato: 0,
@@ -30,7 +36,14 @@ export class SaveClientComponent {
   errorMessage = signal('');
   successMessage = signal('');
 
-  onSubmit() {
+  setActiveTab(tab: TabType) {
+    this.activeTab.set(tab);
+    // Clear messages when switching
+    this.errorMessage.set('');
+    this.successMessage.set('');
+  }
+
+  onSubmitClient() {
     this.isLoading.set(true);
     this.errorMessage.set('');
     this.successMessage.set('');
@@ -49,8 +62,6 @@ export class SaveClientComponent {
           latitude: 0,
           longitude: 0
         };
-        // Optional: redirect after some time
-        // setTimeout(() => this.router.navigate(['/search']), 2000);
       },
       error: (err) => {
         this.isLoading.set(false);

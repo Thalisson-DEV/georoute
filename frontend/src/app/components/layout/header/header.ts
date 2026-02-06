@@ -29,6 +29,10 @@ import { AuthService } from '../../../core/services/auth.service';
           <a routerLink="/search" 
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
              class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Buscar</a>
+             
+          <a routerLink="/routes" 
+             routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
+             class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Roteirização</a>
           
           <a *ngIf="authService.isAuthenticated()" routerLink="/register" 
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
@@ -79,6 +83,10 @@ import { AuthService } from '../../../core/services/auth.service';
           <a routerLink="/search" (click)="closeMenu()" 
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
              class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Buscar</a>
+             
+          <a routerLink="/routes" (click)="closeMenu()" 
+             routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
+             class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Roteirização</a>
           
           <a *ngIf="authService.isAuthenticated()" routerLink="/register" (click)="closeMenu()" 
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
