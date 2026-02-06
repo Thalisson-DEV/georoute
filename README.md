@@ -15,6 +15,13 @@ O **Sipel Logistics Helper** (codinome GeoRoute) é uma solução Full Stack cor
 - **Geolocalização:** Integração direta com Google Maps para navegação até o ponto de serviço.
 - **Importação:** Processamento assíncrono de grandes volumes de dados via CSV.
 
+### 🗺️ Funcionalidades de Roteirização (Novo)
+O sistema agora conta com um poderoso **Planejador de Rotas** para otimizar o trabalho de campo:
+- **Otimização Inteligente:** Criação de rotas otimizadas com base na localização das equipes e dos clientes selecionados.
+- **Histórico de Rotas:** Consulta completa de rotas anteriores por equipe, permitindo auditoria e replanejamento.
+- **Integração com Maps:** Geração automática de links de navegação turn-by-turn para o Google Maps.
+- **Flexibilidade:** Suporte para início de rota a partir da Base Operacional ou da Localização Atual (GPS) do dispositivo.
+
 ## 🏗️ Estrutura do Projeto
 
 O projeto é dividido em dois grandes módulos monorepo:
