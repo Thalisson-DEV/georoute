@@ -63,6 +63,11 @@ No diretório raiz do backend:
 ### Maps
 *   GET /api/v1/maps/redirect: Redireciona para o Google Maps.
 
+### Rotas (RouteController)
+*   **POST /api/v1/routes/optimize:** Calcula rota otimizada. Suporta `currentLat` e `currentLon` opcionais. Se não fornecidos, usa a base da equipe.
+*   **GET /api/v1/routes/history/{teamId}:** Retorna histórico de execuções.
+*   **GET /api/v1/routes/{id}:** Retorna detalhes de uma rota específica (JSON completo).
+
 ## 5. Frontend (Angular)
 
 O frontend foi desenvolvido utilizando Angular moderno (Standalone Components).
@@ -71,6 +76,10 @@ O frontend foi desenvolvido utilizando Angular moderno (Standalone Components).
 *   **Busca Unificada:** Interface de busca que detecta automaticamente o tipo de dado (Instalação, Conta Contrato, etc).
 *   **Paginação:** Integração completa com os endpoints paginados do backend (Pageable).
 *   **Visualização:** Exibição dos dados do cliente e link direto para rota no Google Maps.
+*   **Planejador de Rotas (Melhorado):**
+    *   **Abas:** Separação entre "Nova Rota" e "Histórico".
+    *   **Geolocalização:** Opção para usar a localização atual do dispositivo ou a base operacional da equipe como ponto de partida/chegada.
+    *   **Feedback Visual:** UI refinada com linha do tempo para os passos da rota.
 
 ### Executando o Frontend
 No diretório rontend:
