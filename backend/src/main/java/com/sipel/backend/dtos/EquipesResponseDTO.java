@@ -1,6 +1,7 @@
 package com.sipel.backend.dtos;
 
 import com.sipel.backend.domain.enums.SetorEnum;
+import com.sipel.backend.domain.enums.MunicipioEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Dados de retorno da equipe")
@@ -18,5 +19,8 @@ public record EquipesResponseDTO(
     Double longitudeBase,
 
     @Schema(description = "Setor de atuação", example = "LEITURA")
-    SetorEnum setor
+    SetorEnum setor,
+
+    @Schema(description = "Município de atuação", example = "JUAZEIRO")
+    MunicipioEnum municipio
 ) {}

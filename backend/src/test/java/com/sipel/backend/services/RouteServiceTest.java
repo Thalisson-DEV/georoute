@@ -93,7 +93,7 @@ class RouteServiceTest {
         // Arrange
         RouteRequestDTO request = new RouteRequestDTO(1L, Collections.emptyList(), -23.0, -46.0);
         String clientsHash = String.valueOf(request.clients().hashCode());
-        String cacheKey = String.format("rota:equipe:%d:data:%s:clients:%s", request.teamId(), LocalDate.now(), clientsHash);
+        String cacheKey = String.format("rota:equipe:%d:data:%s:start:%.4f,%.4f:clients:%s", request.teamId(), LocalDate.now(), request.currentLat(), request.currentLon(), clientsHash);
         String cachedJson = "{\"summary\":{\"cost\":100.0}}";
         OrsOptimizationResponseDTO expectedResponse = new OrsOptimizationResponseDTO(null, new OrsSummaryDTO(100.0, 0.0, 0.0));
 
@@ -116,7 +116,7 @@ class RouteServiceTest {
         // Arrange
         RouteRequestDTO request = new RouteRequestDTO(1L, List.of(new ClientDTO(1L, -23.0, -46.0)), -23.5, -46.5);
         String clientsHash = String.valueOf(request.clients().hashCode());
-        String cacheKey = String.format("rota:equipe:%d:data:%s:clients:%s", request.teamId(), LocalDate.now(), clientsHash);
+        String cacheKey = String.format("rota:equipe:%d:data:%s:start:%.4f,%.4f:clients:%s", request.teamId(), LocalDate.now(), request.currentLat(), request.currentLon(), clientsHash);
         OrsOptimizationResponseDTO apiResponse = new OrsOptimizationResponseDTO(Collections.emptyList(), new OrsSummaryDTO(200.0, 100.0, 100.0));
         String jsonResponse = "{\"summary\":{\"cost\":200.0}}";
 
@@ -152,9 +152,10 @@ class RouteServiceTest {
     void shouldUseTeamBaseLocation() throws Exception {
         // Arrange
         RouteRequestDTO request = new RouteRequestDTO(1L, List.of(new ClientDTO(1L, -23.0, -46.0)), null, null);
-        Equipes equipe = new Equipes(1L, "Team A", -10.0, -20.0, com.sipel.backend.domain.enums.SetorEnum.LEITURA);
+        Equipes equipe = new Equipes(1L, "Team A", -10.0, -20.0, com.sipel.backend.domain.enums.SetorEnum.LEITURA, com.sipel.backend.domain.enums.MunicipioEnum.JUAZEIRO);
         String clientsHash = String.valueOf(request.clients().hashCode());
-        String cacheKey = String.format("rota:equipe:%d:data:%s:clients:%s", request.teamId(), LocalDate.now(), clientsHash);
+        // Note: RouteService uses team base location for cache key if current location is null
+        String cacheKey = String.format("rota:equipe:%d:data:%s:start:%.4f,%.4f:clients:%s", request.teamId(), LocalDate.now(), equipe.getLatitudeBase(), equipe.getLongitudeBase(), clientsHash);
         OrsOptimizationResponseDTO apiResponse = new OrsOptimizationResponseDTO(Collections.emptyList(), new OrsSummaryDTO(300.0, 0.0, 0.0));
 
         when(equipesRepository.findById(1L)).thenReturn(Optional.of(equipe));

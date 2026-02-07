@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.sipel.backend.domain.enums.MunicipioEnum;
+
 @RestController
 @RequestMapping("/api/v1/equipes")
 @Tag(name = "Equipes", description = "Gerenciamento de Equipes")
@@ -66,10 +68,12 @@ public class EquipesController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar Equipes", description = "Retorna lista de equipes, opcionalmente filtrada por setor.")
+    @Operation(summary = "Listar Equipes", description = "Retorna lista de equipes, opcionalmente filtrada por setor e/ou município.")
     public ResponseEntity<List<EquipesResponseDTO>> findAllEquipes(
             @Parameter(description = "Setor para filtro (COMERCIAL ou LEITURA)")
-            @RequestParam(required = false) SetorEnum setor) {
-        return ResponseEntity.ok(equipesService.findAllEquipes(setor));
+            @RequestParam(required = false) SetorEnum setor,
+            @Parameter(description = "Município para filtro (JUAZEIRO, REMANSO, BONFIM, JACOBINA)")
+            @RequestParam(required = false) MunicipioEnum municipio) {
+        return ResponseEntity.ok(equipesService.findAllEquipes(setor, municipio));
     }
 }

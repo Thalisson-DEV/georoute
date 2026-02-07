@@ -1,6 +1,7 @@
 package com.sipel.backend.services;
 
 import com.sipel.backend.domain.Equipes;
+import com.sipel.backend.domain.enums.MunicipioEnum;
 import com.sipel.backend.domain.enums.SetorEnum;
 import com.sipel.backend.dtos.EquipesRequestDTO;
 import com.sipel.backend.dtos.EquipesResponseDTO;
@@ -37,8 +38,8 @@ class EquipesServiceTest {
     @Test
     @DisplayName("Should save equipe successfully when name does not exist")
     void shouldSaveEquipe() {
-        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA);
-        Equipes entity = new Equipes(1L, "Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA);
+        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA, MunicipioEnum.JUAZEIRO);
+        Equipes entity = new Equipes(1L, "Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA, MunicipioEnum.JUAZEIRO);
 
         when(equipesRepository.existsByNome(request.nome())).thenReturn(false);
         when(equipesMapper.dtoRequestToEntity(request)).thenReturn(entity);
@@ -51,7 +52,7 @@ class EquipesServiceTest {
     @Test
     @DisplayName("Should throw EntityAlreadyExistsException when name already exists during save")
     void shouldThrowExceptionWhenNameExistsOnSave() {
-        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA);
+        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA, MunicipioEnum.JUAZEIRO);
 
         when(equipesRepository.existsByNome(request.nome())).thenReturn(true);
 
@@ -63,8 +64,8 @@ class EquipesServiceTest {
     @DisplayName("Should update equipe successfully")
     void shouldUpdateEquipe() {
         Long id = 1L;
-        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Beta", -23.1, -46.1, SetorEnum.COMERCIAL);
-        Equipes existing = new Equipes(id, "Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA);
+        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Beta", -23.1, -46.1, SetorEnum.COMERCIAL, MunicipioEnum.REMANSO);
+        Equipes existing = new Equipes(id, "Equipe Alpha", -23.0, -46.0, SetorEnum.LEITURA, MunicipioEnum.JUAZEIRO);
 
         when(equipesRepository.findById(id)).thenReturn(Optional.of(existing));
         when(equipesRepository.existsByNome(request.nome())).thenReturn(false);
@@ -74,13 +75,14 @@ class EquipesServiceTest {
         
         verify(equipesRepository).save(existing);
         assertEquals("Equipe Beta", existing.getNome());
+        assertEquals(MunicipioEnum.REMANSO, existing.getMunicipio());
     }
 
     @Test
     @DisplayName("Should throw EntityNotFoundException when updating non-existent equipe")
     void shouldThrowExceptionWhenUpdatingNonExistent() {
         Long id = 1L;
-        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Beta", -23.1, -46.1, SetorEnum.COMERCIAL);
+        EquipesRequestDTO request = new EquipesRequestDTO("Equipe Beta", -23.1, -46.1, SetorEnum.COMERCIAL, MunicipioEnum.JUAZEIRO);
 
         when(equipesRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -111,15 +113,50 @@ class EquipesServiceTest {
     void shouldListEquipesBySetor() {
         SetorEnum setor = SetorEnum.COMERCIAL;
         List<Equipes> entities = List.of(new Equipes());
-        List<EquipesResponseDTO> responses = List.of(new EquipesResponseDTO(1L, "A", 0.0, 0.0, setor));
+        List<EquipesResponseDTO> responses = List.of(new EquipesResponseDTO(1L, "A", 0.0, 0.0, setor, MunicipioEnum.JUAZEIRO));
 
         when(equipesRepository.findAllBySetor(setor)).thenReturn(entities);
         when(equipesMapper.entityListToDtoResponseList(entities)).thenReturn(responses);
 
-        List<EquipesResponseDTO> result = equipesService.findAllEquipes(setor);
+        List<EquipesResponseDTO> result = equipesService.findAllEquipes(setor, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(equipesRepository).findAllBySetor(setor);
+    }
+
+    @Test
+    @DisplayName("Should list all equipes filtered by municipio")
+    void shouldListEquipesByMunicipio() {
+        MunicipioEnum municipio = MunicipioEnum.JACOBINA;
+        List<Equipes> entities = List.of(new Equipes());
+        List<EquipesResponseDTO> responses = List.of(new EquipesResponseDTO(1L, "A", 0.0, 0.0, SetorEnum.LEITURA, municipio));
+
+        when(equipesRepository.findAllByMunicipio(municipio)).thenReturn(entities);
+        when(equipesMapper.entityListToDtoResponseList(entities)).thenReturn(responses);
+
+        List<EquipesResponseDTO> result = equipesService.findAllEquipes(null, municipio);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(equipesRepository).findAllByMunicipio(municipio);
+    }
+
+    @Test
+    @DisplayName("Should list all equipes filtered by setor and municipio")
+    void shouldListEquipesBySetorAndMunicipio() {
+        SetorEnum setor = SetorEnum.LEITURA;
+        MunicipioEnum municipio = MunicipioEnum.BONFIM;
+        List<Equipes> entities = List.of(new Equipes());
+        List<EquipesResponseDTO> responses = List.of(new EquipesResponseDTO(1L, "A", 0.0, 0.0, setor, municipio));
+
+        when(equipesRepository.findAllBySetorAndMunicipio(setor, municipio)).thenReturn(entities);
+        when(equipesMapper.entityListToDtoResponseList(entities)).thenReturn(responses);
+
+        List<EquipesResponseDTO> result = equipesService.findAllEquipes(setor, municipio);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(equipesRepository).findAllBySetorAndMunicipio(setor, municipio);
     }
 }

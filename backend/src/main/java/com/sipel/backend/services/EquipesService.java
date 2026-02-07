@@ -18,6 +18,8 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import com.sipel.backend.domain.enums.MunicipioEnum;
+
 @Service
 @RequiredArgsConstructor
 @Validated
@@ -51,6 +53,7 @@ public class EquipesService {
         equipe.setLatitudeBase(request.latitudeBase());
         equipe.setLongitudeBase(request.longitudeBase());
         equipe.setSetor(request.setor());
+        equipe.setMunicipio(request.municipio());
 
         equipesRepository.save(equipe);
     }
@@ -65,11 +68,15 @@ public class EquipesService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "equipes", key = "#setor == null ? 'ALL' : #setor.name()")
-    public List<EquipesResponseDTO> findAllEquipes(SetorEnum setor) {
+    @Cacheable(value = "equipes", key = "T(java.lang.String).format('%s-%s', #setor, #municipio)")
+    public List<EquipesResponseDTO> findAllEquipes(SetorEnum setor, MunicipioEnum municipio) {
         List<Equipes> equipes;
-        if (setor != null) {
+        if (setor != null && municipio != null) {
+            equipes = equipesRepository.findAllBySetorAndMunicipio(setor, municipio);
+        } else if (setor != null) {
             equipes = equipesRepository.findAllBySetor(setor);
+        } else if (municipio != null) {
+            equipes = equipesRepository.findAllByMunicipio(municipio);
         } else {
             equipes = equipesRepository.findAll();
         }

@@ -1,5 +1,6 @@
 package com.sipel.backend.domain;
 
+import com.sipel.backend.domain.enums.MunicipioEnum;
 import com.sipel.backend.domain.enums.SetorEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,4 +27,7 @@ public class Equipes {
 
     @Enumerated(EnumType.STRING)
     private SetorEnum setor;
+
+    @Enumerated(EnumType.STRING)
+    private MunicipioEnum municipio;
 }

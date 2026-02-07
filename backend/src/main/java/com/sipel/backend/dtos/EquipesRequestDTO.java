@@ -1,6 +1,7 @@
 package com.sipel.backend.dtos;
 
 import com.sipel.backend.domain.enums.SetorEnum;
+import com.sipel.backend.domain.enums.MunicipioEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,5 +22,9 @@ public record EquipesRequestDTO(
 
     @Schema(description = "Setor de atuação da equipe", example = "LEITURA")
     @NotNull(message = "O setor é obrigatório")
-    SetorEnum setor
+    SetorEnum setor,
+
+    @Schema(description = "Município de atuação da equipe", example = "JUAZEIRO")
+    @NotNull(message = "O município é obrigatório")
+    MunicipioEnum municipio
 ) {}
