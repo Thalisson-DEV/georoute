@@ -9,6 +9,7 @@ import { OrsOptimizationResponse } from '../../../core/interfaces/ors-optimizati
 import { RouteRequest } from '../../../core/interfaces/route-request.interface';
 import { Equipe } from '../../../core/interfaces/equipe.interface';
 import { SetorEnum } from '../../../core/interfaces/setor.enum';
+import { MunicipioEnum } from '../../../core/interfaces/municipio.enum';
 import { RouteHistory } from '../../../core/interfaces/route-history.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -25,6 +26,7 @@ export class RoutePlannerComponent implements OnInit {
 
   // Form inputs
   selectedSetor: SetorEnum | '' = '';
+  selectedMunicipio: MunicipioEnum | '' = '';
   selectedTeamId: number | null = null;
   
   // UI State
@@ -37,6 +39,7 @@ export class RoutePlannerComponent implements OnInit {
   teams = signal<Equipe[]>([]);
   routeHistory = signal<RouteHistory[]>([]);
   setorOptions = Object.values(SetorEnum);
+  municipioOptions = Object.values(MunicipioEnum);
   
   // Cache for client details fetched by ID
   clientCache = signal(new Map<number, Cliente>());
@@ -123,8 +126,9 @@ export class RoutePlannerComponent implements OnInit {
   loadTeams() {
     this.isTeamsLoading.set(true);
     const setor = this.selectedSetor === '' ? undefined : this.selectedSetor;
+    const municipio = this.selectedMunicipio === '' ? undefined : this.selectedMunicipio;
     
-    this.teamService.getTeams(setor).subscribe({
+    this.teamService.getTeams(setor, municipio).subscribe({
       next: (data) => {
         this.teams.set(data);
         this.isTeamsLoading.set(false);
@@ -141,6 +145,10 @@ export class RoutePlannerComponent implements OnInit {
   }
 
   onSetorChange() {
+    this.loadTeams();
+  }
+
+  onMunicipioChange() {
     this.loadTeams();
   }
 

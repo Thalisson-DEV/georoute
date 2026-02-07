@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { TeamService } from '../../../core/services/team.service';
 import { Equipe, EquipeRequest } from '../../../core/interfaces/equipe.interface';
 import { SetorEnum } from '../../../core/interfaces/setor.enum';
+import { MunicipioEnum } from '../../../core/interfaces/municipio.enum';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -29,10 +30,12 @@ export class ManageTeamsComponent implements OnInit {
     nome: '',
     latitudeBase: 0,
     longitudeBase: 0,
-    setor: SetorEnum.LEITURA
+    setor: SetorEnum.LEITURA,
+    municipio: MunicipioEnum.JUAZEIRO
   };
 
   setorOptions = Object.values(SetorEnum);
+  municipioOptions = Object.values(MunicipioEnum);
 
   ngOnInit() {
     this.loadTeams();
@@ -67,7 +70,8 @@ export class ManageTeamsComponent implements OnInit {
       nome: team.nome,
       latitudeBase: team.latitudeBase,
       longitudeBase: team.longitudeBase,
-      setor: team.setor
+      setor: team.setor,
+      municipio: team.municipio
     };
     this.isModalOpen.set(true);
   }
@@ -124,7 +128,8 @@ export class ManageTeamsComponent implements OnInit {
       nome: '',
       latitudeBase: 0,
       longitudeBase: 0,
-      setor: SetorEnum.LEITURA
+      setor: SetorEnum.LEITURA,
+      municipio: MunicipioEnum.JUAZEIRO
     };
   }
 }

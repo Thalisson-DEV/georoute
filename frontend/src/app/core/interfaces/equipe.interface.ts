@@ -1,4 +1,5 @@
 import { SetorEnum } from './setor.enum';
+import { MunicipioEnum } from './municipio.enum';
 
 export interface Equipe {
   id: number;
@@ -6,6 +7,7 @@ export interface Equipe {
   latitudeBase: number;
   longitudeBase: number;
   setor: SetorEnum;
+  municipio: MunicipioEnum;
 }
 
 export interface EquipeRequest {
@@ -13,4 +15,5 @@ export interface EquipeRequest {
   latitudeBase: number;
   longitudeBase: number;
   setor: SetorEnum;
+  municipio: MunicipioEnum;
 }
