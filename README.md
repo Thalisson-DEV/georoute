@@ -26,10 +26,12 @@ O sistema agora conta com um poderoso **Planejador de Rotas** para otimizar o tr
 
 O projeto é dividido em dois grandes módulos monorepo:
 
-### 🔙 [Backend](./backend)
-API RESTful robusta construída com **Java 21** e **Spring Boot**.
-- **Destaques:** Alta performance com Redis, segurança com JWT/Spring Security, e monitoramento com Prometheus/Grafana.
-- [Ver Documentação do Backend](./backend/README.md)
+### 🔙 [Backend](./backend-bun)
+API RESTful leve construída com **Bun** e **TypeScript** (monolito).
+- **Stack:** [Hono](https://hono.dev) (HTTP), **Drizzle ORM** + PostgreSQL, cache em **Redis** (cliente nativo do Bun), validação com `zod` e import de CSV em streaming.
+- **Destaques:** baixo consumo de RAM, agendador interno de limpeza de rotas e os mesmos contratos HTTP do back-end anterior (base `/api/v1`).
+- > Reescrito a partir do antigo back-end Java 21 / Spring Boot. A **autenticação foi removida** (não há mais `/auth/login`, JWT ou tabela de usuários), assim como a observabilidade (Prometheus/Actuator/Swagger).
+- [Ver Documentação do Backend](./backend-bun/README.md)
 
 ### 🖥️ [Frontend](./frontend)
 Interface moderna e responsiva construída com **Angular 21**.
@@ -39,22 +41,25 @@ Interface moderna e responsiva construída com **Angular 21**.
 ## 🚀 Como Executar o Projeto Completo
 
 ### Pré-requisitos
-- Docker & Docker Compose
-- Node.js (v20+)
-- Java JDK 21
+- [Bun](https://bun.sh) (v1+)
+- Node.js (v20+) — para o front-end
+- Docker (opcional) — para subir PostgreSQL e Redis localmente
 
 ### Infraestrutura (Banco de Dados & Cache)
-O backend possui um `docker-compose.yaml` para subir as dependências rapidamente.
+O back-end usa **PostgreSQL** e **Redis**. Em desenvolvimento, suba-os via Docker (ou aponte para instâncias existentes):
 
 ```bash
-cd backend
-docker-compose up -d
+docker run -d --name georoute-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
+docker run -d --name georoute-redis -p 6379:6379 redis:7
 ```
 
 ### Rodando o Backend
 ```bash
-cd backend
-./mvnw spring-boot:run
+cd backend-bun
+cp .env.example .env   # configure PG*, REDIS*, ORS_API_KEY
+bun install
+bun run migrate        # aplica índices (idempotente)
+bun run dev            # servidor com hot reload
 ```
 *API disponível em: http://localhost:8080*
 
