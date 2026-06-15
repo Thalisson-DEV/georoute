@@ -1,30 +1,17 @@
 import { Routes } from '@angular/router';
 import { SearchPageComponent } from './features/search/search-page/search-page';
 import { HelpPageComponent } from './features/help/help-page/help-page';
-import { LoginPageComponent } from './features/auth/login-page/login-page';
 import { SaveClientComponent } from './features/admin/save-client/save-client';
 import { ImportClientsComponent } from './features/admin/import-clients/import-clients';
 import { RoutePlannerComponent } from './features/routes/route-planner/route-planner';
-import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'search', pathMatch: 'full' },
   { path: 'search', component: SearchPageComponent, title: 'GeoRoute - Buscar Clientes' },
   { path: 'routes', component: RoutePlannerComponent, title: 'GeoRoute - Roteirização' },
-  { 
-    path: 'register', 
-    component: SaveClientComponent, 
-    title: 'GeoRoute - Cadastro',
-    canActivate: [authGuard] 
-  },
-  { 
-    path: 'import', 
-    component: ImportClientsComponent, 
-    title: 'GeoRoute - Importar Clientes',
-    canActivate: [authGuard]
-  },
+  { path: 'register', component: SaveClientComponent, title: 'GeoRoute - Cadastro' },
+  { path: 'import', component: ImportClientsComponent, title: 'GeoRoute - Importar Clientes' },
   { path: 'help', component: HelpPageComponent, title: 'GeoRoute - Ajuda' },
-  { path: 'login', component: LoginPageComponent, title: 'GeoRoute - Login' },
   // Wildcard route for 404
   { path: '**', redirectTo: 'search' }
 ];

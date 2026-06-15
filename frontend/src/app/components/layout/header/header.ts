@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
-import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -34,25 +33,17 @@ import { AuthService } from '../../../core/services/auth.service';
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
              class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Roteirização</a>
           
-          <a *ngIf="authService.isAuthenticated()" routerLink="/register" 
+          <a routerLink="/register" 
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
              class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Cadastrar</a>
           
-          <a *ngIf="authService.isAuthenticated()" routerLink="/import" 
+          <a routerLink="/import" 
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
              class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Importar</a>
           
           <a routerLink="/help" 
              routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
              class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Ajuda</a>
-          
-          <!-- Login/Logout Logic -->
-          <a *ngIf="!authService.isAuthenticated()" routerLink="/login" 
-             routerLinkActive="bg-geoblue-800 text-geoblue-300 font-semibold shadow-inner" 
-             class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all">Login</a>
-             
-          <button *ngIf="authService.isAuthenticated()" (click)="logout()" 
-             class="px-4 py-2 rounded-md hover:bg-geoblue-800/50 transition-all text-left">Logout</button>
         </nav>
 
         <!-- Actions (Desktop & Mobile) -->
@@ -88,24 +79,17 @@ import { AuthService } from '../../../core/services/auth.service';
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
              class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Roteirização</a>
           
-          <a *ngIf="authService.isAuthenticated()" routerLink="/register" (click)="closeMenu()" 
+          <a routerLink="/register" (click)="closeMenu()" 
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
              class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Cadastrar</a>
           
-          <a *ngIf="authService.isAuthenticated()" routerLink="/import" (click)="closeMenu()" 
+          <a routerLink="/import" (click)="closeMenu()" 
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
              class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Importar</a>
           
           <a routerLink="/help" (click)="closeMenu()" 
              routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
              class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Ajuda</a>
-          
-          <a *ngIf="!authService.isAuthenticated()" routerLink="/login" (click)="closeMenu()" 
-             routerLinkActive="bg-geoblue-700 border-l-4 border-geoblue-300 text-white font-semibold" 
-             class="block px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Login</a>
-             
-          <button *ngIf="authService.isAuthenticated()" (click)="logout(); closeMenu()" 
-             class="block w-full text-left px-4 py-3 rounded-r-md hover:bg-geoblue-700 transition-all">Logout</button>
         </nav>
       </div>
     </header>
@@ -113,7 +97,6 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class HeaderComponent {
   themeService = inject(ThemeService);
-  authService = inject(AuthService);
   isMenuOpen = signal(false);
 
   toggleTheme() {
@@ -126,9 +109,5 @@ export class HeaderComponent {
 
   closeMenu() {
     this.isMenuOpen.set(false);
-  }
-  
-  logout() {
-    this.authService.logout();
   }
 }
